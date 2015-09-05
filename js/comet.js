@@ -30,6 +30,7 @@ var SYNTH = {
 	nodes: {},
 	voices: new Map(),
 	context: new (window.AudioContext || window.webkitAudioContext)(),
+	presets: [],
 	settings: {
 		osc1: {
 			type: 'sawtooth',
@@ -72,8 +73,11 @@ var SYNTH = {
 		}
 	},
 	setupSettings: function (settings) {
-		// TODO if (settings) { SYNTH.settings = $.extend(true, SYNTH.settings, settings); }
-		settings = settings || SYNTH.settings;
+		if (settings) {
+			SYNTH.settings = $.extend(true, SYNTH.settings, settings);
+		}
+		settings = SYNTH.settings;
+		console.log('setupSettings', settings);
 		var nodes = SYNTH.nodes;
 
 		// OSCILLATOR 1
@@ -1210,39 +1214,50 @@ $('#animation-analyser-maxDecibels').on('input', function () {
 // ##############################################
 // # KEYBOARD                                   #
 // ##############################################
+
+(function () {
+	function connectKeyboard(startNote) {
+		var keyboardElement = document.getElementById('keyboard');
+		if (keyboardElement) {
+			keyboardElement.remove();
+		}
+		keyboardElement = document.createElement('div');
+		keyboardElement.hidden = true;
+		keyboardElement.setAttribute('id', 'keyboard');
+		document.body.appendChild(keyboardElement);
+
+		var keyboard = new QwertyHancock({
+			id: 'keyboard',
+			width: window.innerWidth,
+			height: window.innerHeight / 2,
+			octaves: 2,
+			startNote: startNote,
+			whiteKeyColour: '#E7ECEE',
+			blackKeyColour: '#1F2022',
+			activeColour: '#46C891',
+			borderColour: 'black',
+			keyboardLayout: 'en'
+		});
+
+		keyboard.keyDown = function (note, frequency) {
+			SYNTH.addVoice('keyboard-' + note, frequency, 0.5);
+		};
+
+		keyboard.keyUp = function (note, frequency) {
+			SYNTH.removeVoice('keyboard-' + note);
+		};
+
+		return keyboard;
+	}
+
+	connectKeyboard('C4');
+})();
+
 /*
 
-Z	-> Octave Down
-X	-> Octave Up
+// Z	-> Octave Down
+// X	-> Octave Up
 
-*/
-
-function connectKeyboard(startNote) {
-	var keyboard = new QwertyHancock({
-		id: 'keyboard',
-		width: window.innerWidth,
-		height: window.innerHeight / 2,
-		octaves: 2,
-		startNote: startNote,
-		whiteKeyColour: '#E7ECEE',
-		blackKeyColour: '#1F2022',
-		activeColour: '#46C891',
-		borderColour: 'black',
-		keyboardLayout: 'en'
-	});
-
-	keyboard.keyDown = function (note, frequency) {
-		SYNTH.addVoice('keyboard-' + note, frequency, 0.5);
-	};
-
-	keyboard.keyUp = function (note, frequency) {
-		SYNTH.removeVoice('keyboard-' + note);
-	};
-
-	return keyboard;
-}
-
-connectKeyboard('C4');
 var keyboardFirstNote = 4;
 $(window).on('keydown', function (event) {
 	if (event.keyCode === 90) {
@@ -1261,66 +1276,73 @@ $(window).on('keydown', function (event) {
 		connectKeyboard('C' + keyboardFirstNote);
 	}
 });
+*/
 
 // ##############################################
 // # PRESET CONTROLS                            #
 // ##############################################
 
-var presets = [];
-var userPresets = [];
-var factoryPresets = [
-	$.extend({ "id": 1, "name": "Default" }, SYNTH.settings),
+[
+	{ "id": 1, "name": "Default" },
 	{
 		"id": 2,
 		"name": "Classic Electric Bass",
 		"osc1": { "type": "sine", "detune": 0, "mix": 1 },
-		"osc2": { "type": "sine", "detune": 1200, "mix": 1 },
-		"filter": { "type": "lowpass", "detune": 0, "frequency": 22050, "quality": 0, "gain": 0 },
-		"convolver": { "type": "none" },
-		"compressor": { "threshold": -24, "knee": 30, "ratio": 12, "reduction": 0, "attack": 0.003, "release": 0.25 },
-		"animation": { "type": "spectrum-round", "settings": 512 }
+		"osc2": { "type": "sine", "detune": 1200, "mix": 1 }
 	},
 	{
 		"id": 3,
 		"name": "Buzzer",
 		"osc1": { "type": "sawtooth", "detune": 0, "mix": 1 },
 		"osc2": { "type": "sawtooth", "detune": -1200, "mix": 0.5 },
-		"filter": { "type": "lowpass", "detune": 0, "frequency": 3000, "quality": 26, "gain": 0 },
-		"convolver": { "type": "none" },
-		"compressor": { "threshold": -24, "knee": 30, "ratio": 12, "reduction": 0, "attack": 0.003, "release": 0.25 },
-		"animation": { "type": "spectrum-round", "settings": 512 }
+		"filter": { "type": "lowpass", "detune": 0, "frequency": 3000, "quality": 26, "gain": 0 }
+	},
+	{
+		"id": 4,
+		"name": "ChipChip",
+		"osc1": { "type": "square", "detune": 464, "mix": 1 },
+		"filter": { "type": "highpass", "detune": 0, "frequency": 5000, "quality": 30, "gain": 0 }
+	},
+	{
+		"id": 5,
+		"name": "Organth",
+		"osc1": { "type": "sawtooth", "detune": -456, "mix": 1 },
+		"filter": { "type": "highpass", "detune": 0, "frequency": 1716, "quality": 9.6, "gain": 18 }
 	}
-];
+].forEach(function (preset) {
+	var tmpSettings = $.extend(true, {}, SYNTH.settings)
+	SYNTH.presets.push($.extend(true, tmpSettings, preset));
+});
 
 $('#preset-id').on('change', function () {
-	var presetID = parseInt($(this).val(), 10),
-		preset;
-	for (var i = 0; i < presets.length; ++i) {
-		if (presetID === presets[i].id) {
-			preset = presets[i];
-			SYNTH.setupSettings(preset);
-			//console.log('preset "' + preset.name + '" loaded')
+	var presetID = parseInt($(this).val(), 10);
+	for (var i = 0; i < SYNTH.presets.length; ++i) {
+		if (presetID === SYNTH.presets[i].id) {
+			SYNTH.setupSettings(SYNTH.presets[i]);
 			break;
 		}
 	}
-}).on('update', function () {
-	var select = $(this);
-	select.empty();
-	presets.forEach(function (preset) {
-		select.append('<option value="' + preset.id + '">' + preset.name + '</option>');
+}).on('update', function (e) {
+	var $select = $(this),
+		precedentValue = $select.val() !== null ? $select.val() : 1;
+	$select.empty();
+	SYNTH.presets.forEach(function (preset) {
+		$select.append('<option value="' + preset.id + '">' + preset.name + '</option>');
 	});
-	select.trigger('change');
-});
+	$select.val(e.toBeSelected !== undefined ? e.toBeSelected : precedentValue).trigger('change');
+}).trigger('update');
 
 $('#preset-save').on('click', function () {
 	var name = prompt('Preset name');
 	if (name) {
-		var preset = $.extend({
+		var preset = $.extend(true, {
 			id: Date.now(),
 			name: name
 		}, SYNTH.settings);
-		presets.push(preset);
-		localforage.setItem('presets', presets, function (error, value) {
+		SYNTH.presets.push(preset);
+		$('#preset-id').trigger({ type: 'update', toBeSelected: preset.id });
+		/*
+		localforage.setItem('presets', SYNTH.presets, function (error, value) {
 			if (error) {
 				console.error(error);
 			} else {
@@ -1328,30 +1350,31 @@ $('#preset-save').on('click', function () {
 				$('#preset-id').trigger('update');
 			}
 		});
+		*/
 	}
 });
 
 /*
 $('#preset-export').on('click', function () {
 	var presetID = parseInt($('#preset-id').val(), 10);
-	presets.forEach(function (preset) {
+	SYNTH.presets.forEach(function (preset) {
 		if (presetID === preset.id) {
 			alert(JSON.stringify(preset));
 		}
 	});
 });
 */
-
+/*
 localforage.getItem('presets', function (error, value) {
 	if (error) {
 		console.error(error);
 	}
 	if (value) {
-		window.presets = value;
+		SYNTH.presets = value;
 		$('#preset-id').trigger('update');
 	}
 	if (!error && !value) {
-		localforage.setItem('presets', window.presets, function (error, value) {
+		localforage.setItem('presets', SYNTH.presets, function (error, value) {
 			if (error) {
 				console.error(error);
 			} else {
@@ -1361,6 +1384,7 @@ localforage.getItem('presets', function (error, value) {
 		});
 	}
 });
+*/
 
 // ##############################################
 // # POINTER                                    #
