@@ -48,6 +48,18 @@ Created and maintained by [Daniele Veneroni](http://venerons.github.io) ([@Vener
 	* Gain
 * EFFECT (EFF)
 	* Effect Type
+		* Pinking Filter
+		* Moog Filter
+		* BitCrusher
+		* White Noiser
+		* Pink Noiser
+		* Brownian Noiser
+		* Noise Convolver
+		* Hall Reverb
+		* Telephone
+		* Muffler
+		* Spring Feedback
+		* Echo
 	* Buffer Size
 * DYNAMICS COMPRESSOR (DCM)
 	* Threshold
@@ -88,19 +100,7 @@ Created and maintained by [Daniele Veneroni](http://venerons.github.io) ([@Vener
 	* Filter Envelope (Attack, Decay, Sustain, Release)
 * Effects
 	* Distorsion
-	* BitCrusher 2
 	* Feedback Delay
-	* Noise Convolver
-	* Hall Reverb
-	* Telephone
-	* Muffler
-	* Spring Feedback
-	* Echo
-	* Noiser 1
-	* Noiser 2
-	* White Noiser
-	* Brownian Noiser
-	* Pink Noiser
 * Modules
 	* LFO
 	* Modulation - modify filter frequency using pointer pageY OR Device Orientation API

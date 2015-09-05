@@ -172,34 +172,31 @@
 				<optgroup label="Filters">
 					<option value="filter-pinking">Pinking Filter</option>
 					<option value="filter-moog">Moog Filter</option>
-					<option value="filter-bitcrusher1">BitCrusher 1</option>
-					<option value="filter-bitcrusher2" disabled>BitCrusher 2</option>
+					<option value="filter-bitcrusher">BitCrusher</option>
+					<option value="filter-whitenoiser">White Noiser</option>
+					<option value="filter-pinknoiser">Pink Noiser</option>
+					<option value="filter-brownnoiser">Brownian Noiser</option>
 				</optgroup>
+				<!--
 				<optgroup label="Delays">
-					<option value="delay-feedback" disabled>Feedback Delay</option>
+					<option value="delay-feedback">Feedback Delay</option>
 				</optgroup>
 				<optgroup label="Waveshapers">
-					<option value="waveshaper-distorsion" disabled>Distorsion</option>
+					<option value="waveshaper-distorsion">Distorsion</option>
 				</optgroup>
+				-->
 				<optgroup label="Convolvers">
-					<option value="convolver-noise">Noise Convolver</option>
-					<option value="convolver-hall">Hall Reverb</option>
-					<option value="convolver-telephone">Telephone</option>
-					<option value="convolver-muffler">Muffler</option>
-					<option value="convolver-spring_feedback">Spring Feedback</option>
-					<option value="convolver-echo">Echo</option>
-				</optgroup>
-				<optgroup label="Noisers">
-					<option value="noise-noiser1" disabled>Noiser 1</option>
-					<option value="noise-noiser2" disabled>Noiser 2</option>
-					<option value="noise-white" disabled>White Noiser</option>
-					<option value="noise-brown" disabled>Brownian Noiser</option>
-					<option value="noise-pink" disabled>Pink Noiser</option>
+					<option value="convolver-noise" disabled>Noise Convolver</option>
+					<option value="convolver-hall" disabled>Hall Reverb</option>
+					<option value="convolver-telephone" disabled>Telephone</option>
+					<option value="convolver-muffler" disabled>Muffler</option>
+					<option value="convolver-spring_feedback" disabled>Spring Feedback</option>
+					<option value="convolver-echo" disabled>Echo</option>
 				</optgroup>
 			</select>
 
 			<!-- MOOG FILTER SETTINGS -->
-			<div id="moogfilter-settings" class="knob-set" style="display: none">
+			<div id="moogfilter-settings" class="effect-settings" style="display: none">
 				<div class="setting-set">
 					<label for="moogfilter-cutoff">Cutoff</label>
 					<input id="moogfilter-cutoff" type="range" min="0" max="1" step="0.001" value="0.065">
@@ -211,7 +208,7 @@
 			</div>
 
 			<!-- BITCRUSHER SETTINGS -->
-			<div id="bitcrusher-settings" class="knob-set" style="display: none">
+			<div id="bitcrusher-settings" class="effect-settings" style="display: none">
 				<div class="setting-set">
 					<label for="bitcrusher-bits">Bits</label>
 					<input id="bitcrusher-bits" type="range" min="1" max="16" step="1" value="4">
@@ -224,8 +221,8 @@
 
 			<label for="effect-buffer">Buffer Size</label>
 			<select id="effect-buffer">
-				<option value="256">256</option>
-				<option value="512" selected>512</option>
+				<option value="256" selected>256</option>
+				<option value="512">512</option>
 				<option value="1024">1024</option>
 				<option value="2048">2048</option>
 				<option value="4096">4096</option>

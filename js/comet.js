@@ -505,194 +505,37 @@ $('#filter-gain').on('input', function () {
 /*
 
 https://chromium.googlecode.com/svn/trunk/samples/audio/impulse-responses/
-
-
 https://stackoverflow.com/questions/7840347/web-audio-api-waveshapernode
 https://stackoverflow.com/questions/22312841/waveshaper-node-in-webaudio-how-to-emulate-distortion
 https://kevincennis.github.io/transfergraph/
 
-
-// NOISER
- 
-var noiser = SYNTH.context.createScriptProcessor(4096, 1, 1);
-noiser.onaudioprocess = function (e) {
-	var inputBuffer = e.inputBuffer,
-		outputBuffer = e.outputBuffer;
-	for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
-		var inputData = inputBuffer.getChannelData(channel),
-			outputData = outputBuffer.getChannelData(channel);
-		for (var sample = 0; sample < inputBuffer.length; sample++) {
-			outputData[sample] = inputData[sample];
-			// add noise to each output sample
-			outputData[sample] += ((Math.random() * 2) - 1) * 0.2;         
-		}
-	}
-};
-
-// NOISER 2
-
-scriptNode.onaudioprocess = function(audioProcessingEvent) {
-  // The input buffer is the song we loaded earlier
-  var inputBuffer = audioProcessingEvent.inputBuffer;
-
-  // The output buffer contains the samples that will be modified and played
-  var outputBuffer = audioProcessingEvent.outputBuffer;
-
-  // Loop through the output channels (in this case there is only one)
-  for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
-    var inputData = inputBuffer.getChannelData(channel);
-    var outputData = outputBuffer.getChannelData(channel);
-
-    // Loop through the 4096 samples
-    for (var sample = 0; sample < inputBuffer.length; sample++) {
-      // make output equal to the same as the input
-      outputData[sample] = inputData[sample];
-
-      // add noise to each output sample
-      outputData[sample] += ((Math.random() * 2) - 1) * 0.2;         
-    }
-  }
-}
-
-// WHITE NOISE (PURE GENERATOR)
-
-var bufferSize = 4096;
-var whiteNoise = audioContext.createScriptProcessor(bufferSize, 1, 1);
-whiteNoise.onaudioprocess = function(e) {
-	var output = e.outputBuffer.getChannelData(0);
-	for (var i = 0; i < bufferSize; i++) {
-		output[i] = Math.random() * 2 - 1;
-	}
-}
-
-// WHITE NOISE (BUFFER LOOPED - MORE EFFICIENT)
-
-var bufferSize = 2 * audioContext.sampleRate,
-	noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate),
-	output = noiseBuffer.getChannelData(0);
-for (var i = 0; i < bufferSize; i++) {
-	output[i] = Math.random() * 2 - 1;
-}
-
-var whiteNoise = audioContext.createBufferSource();
-whiteNoise.buffer = noiseBuffer;
-whiteNoise.loop = true;
-whiteNoise.start(0);
-
-// PINK NOISE by Paul Kellet’s
-
-var bufferSize = 4096;
-var pinkNoise = (function() {
-	var b0, b1, b2, b3, b4, b5, b6;
-	b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
-	var node = audioContext.createScriptProcessor(bufferSize, 1, 1);
-	node.onaudioprocess = function(e) {
-		var output = e.outputBuffer.getChannelData(0);
-		for (var i = 0; i < bufferSize; i++) {
-			var white = Math.random() * 2 - 1;
-			b0 = 0.99886 * b0 + white * 0.0555179;
-			b1 = 0.99332 * b1 + white * 0.0750759;
-			b2 = 0.96900 * b2 + white * 0.1538520;
-			b3 = 0.86650 * b3 + white * 0.3104856;
-			b4 = 0.55000 * b4 + white * 0.5329522;
-			b5 = -0.7616 * b5 - white * 0.0168980;
-			output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-			output[i] *= 0.11; // (roughly) compensate for gain
-			b6 = white * 0.115926;
-		}
-	}
-	return node;
-})();
-
-// BROWNIAN NOISE (brown noise, red noise)
-
-var bufferSize = 4096;
-var brownNoise = (function() {
-	var lastOut = 0.0;
-	var node = audioContext.createScriptProcessor(bufferSize, 1, 1);
-	node.onaudioprocess = function(e) {
-		var output = e.outputBuffer.getChannelData(0);
-		for (var i = 0; i < bufferSize; i++) {
-			var white = Math.random() * 2 - 1;
-			output[i] = (lastOut + (0.02 * white)) / 1.02;
-			lastOut = output[i];
-			output[i] *= 3.5; // (roughly) compensate for gain
-		}
-	}
-	return node;
-})();
-
-// SIMPLE LOWPASS
-
-var bufferSize = parseInt($('#effect-buffer').val(), 10);
-var effect = (function() {
-	var lastOut = 0.0;
-	var node = context.createScriptProcessor(bufferSize, 1, 1);
-	node.onaudioprocess = function(e) {
-		var input = e.inputBuffer.getChannelData(0);
-		var output = e.outputBuffer.getChannelData(0);
-		for (var i = 0; i < bufferSize; i++) {
-			output[i] = (input[i] + lastOut) / 2.0;
-			lastOut = output[i];
-		}
-	}
-	return node;
-})();
- 
-// BITCRUSHER
- 
-// parameters
-var bits = 8;
-var frequencyReduction = 0.5;
- 
- 
-var phaser = 0;
-var lastDataValue = 0;
-var bitcrusher = SYNTH.context.createScriptProcessor(4096, 1, 1);
-bitcrusher.onaudioprocess = function (e) {
-	for (var channel = 0; channel < e.inputBuffers.length; channel++) {
-		var inputBuffer = e.inputBuffers[channel],
-			outputBuffer = e.outputBuffers[channel],
-			bufferLength = inputBuffer.length;
-		for (var i = 0; i < bufferLength; i++) {
-			var step = Math.pow(1 / 2, bits);
-			phaser += frequencyReduction;
-			if (phaser >= 1.0) {
-				phaser -= 1.0;
-				lastDataValue = step * Math.floor(inputBuffer[i] / step + 0.5);
-			}
-			outputBuffer[i] = lastDataValue;
-		}
-	}
-};
-
 */
-/*
+
 $('#effect-buffer').on('change', function () {
 	$('#effect-type').trigger('change');
 });
 
 $('#effect-type').on('change', function () {
-	$('#moogfilter-settings, #bitcrusher-settings').hide();
-	if (SYNTH.effect) {
-		SYNTH.effect.disconnect();
-		delete SYNTH.effect;
+	$('.effect-settings').hide();
+	if (SYNTH.nodes.effect) {
+		SYNTH.nodes.effect.disconnect();
+		delete SYNTH.nodes.effect;
 	}
 	SYNTH.nodes.blender.disconnect();
 
-	if ($(this).val() === 'pinkingfilter') {
+	if ($(this).val() === 'filter-pinking') {
 		// ##############################################
-		// # PINKING FILTER                             #
+		// # PINKING FILTER by Paul Kellet              #
 		// ##############################################
 		var bufferSize = parseInt($('#effect-buffer').val(), 10);
-		SYNTH.effect = (function () {
+		SYNTH.nodes.effect = (function () {
 			var b0, b1, b2, b3, b4, b5, b6;
 			b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
 			var node = SYNTH.context.createScriptProcessor(bufferSize, 1, 1);
 			node.onaudioprocess = function (e) {
-				var input = e.inputBuffer.getChannelData(0);
-				var output = e.outputBuffer.getChannelData(0);
-				for (var i = 0; i < bufferSize; i++) {
+				var input = e.inputBuffer.getChannelData(0),
+					output = e.outputBuffer.getChannelData(0);
+				for (var i = 0; i < input.length; ++i) {
 					b0 = 0.99886 * b0 + input[i] * 0.0555179;
 					b1 = 0.99332 * b1 + input[i] * 0.0750759;
 					b2 = 0.96900 * b2 + input[i] * 0.1538520;
@@ -706,26 +549,26 @@ $('#effect-type').on('change', function () {
 			}
 			return node;
 		})();
-	} else if ($(this).val() === 'moogfilter') {
+	} else if ($(this).val() === 'filter-moog') {
 		// ##############################################
 		// # MOOG FILTER                                #
 		// ##############################################
 		$('#moogfilter-settings').show();
 		var bufferSize = parseInt($('#effect-buffer').val(), 10);
-		SYNTH.effect = (function () {
+		SYNTH.nodes.effect = (function () {
 			var node = SYNTH.context.createScriptProcessor(bufferSize, 1, 1);
 			var in1, in2, in3, in4, out1, out2, out3, out4;
 			in1 = in2 = in3 = in4 = out1 = out2 = out3 = out4 = 0.0;
 			node.cutoff = 0.065; // between 0.0 and 1.0
 			node.resonance = 3.99; // between 0.0 and 4.0
 			node.onaudioprocess = function (e) {
-				var input = e.inputBuffer.getChannelData(0);
-				var output = e.outputBuffer.getChannelData(0);
-				var f = node.cutoff * 1.16;
-				var fb = node.resonance * (1.0 - 0.15 * f * f);
-				for (var i = 0; i < bufferSize; i++) {
+				var input = e.inputBuffer.getChannelData(0),
+					output = e.outputBuffer.getChannelData(0),
+					f = node.cutoff * 1.16,
+					fb = node.resonance * (1.0 - 0.15 * f * f);
+				for (var i = 0; i < input.length; ++i) {
 					input[i] -= out4 * fb;
-					input[i] *= 0.35013 * (f*f)*(f*f);
+					input[i] *= 0.35013 * (f * f) * (f * f);
 					out1 = input[i] + 0.3 * in1 + (1 - f) * out1; // Pole 1
 					in1 = input[i];
 					out2 = out1 + 0.3 * in2 + (1 - f) * out2; // Pole 2
@@ -739,23 +582,24 @@ $('#effect-type').on('change', function () {
 			}
 			return node;
 		})();
-	} else if ($(this).val() === 'bitcrusher') {
+		$('#moogfilter-cutoff, #moogfilter-resonance').trigger('input');
+	} else if ($(this).val() === 'filter-bitcrusher') {
 		// ##############################################
 		// # BITCRUSHER                                 #
 		// ##############################################
 		$('#bitcrusher-settings').show();
 		var bufferSize = parseInt($('#effect-buffer').val(), 10);
-		SYNTH.effect = (function () {
+		SYNTH.nodes.effect = (function () {
 			var node = SYNTH.context.createScriptProcessor(bufferSize, 1, 1);
 			node.bits = 4; // between 1 and 16
 			node.normfreq = 0.1; // between 0.0 and 1.0
-			var step = Math.pow(1/2, node.bits);
-			var phaser = 0;
-			var last = 0;
+			var step = Math.pow(1/2, node.bits),
+				phaser = 0,
+				last = 0;
 			node.onaudioprocess = function (e) {
-				var input = e.inputBuffer.getChannelData(0);
-				var output = e.outputBuffer.getChannelData(0);
-				for (var i = 0; i < bufferSize; i++) {
+				var input = e.inputBuffer.getChannelData(0),
+					output = e.outputBuffer.getChannelData(0);
+				for (var i = 0; i < input.length; ++i) {
 					phaser += node.normfreq;
 					if (phaser >= 1.0) {
 						phaser -= 1.0;
@@ -766,40 +610,99 @@ $('#effect-type').on('change', function () {
 			};
 			return node;
 		})();
+		$('#bitcrusher-bits, #bitcrusher-normfreq').trigger('input');
+	} else if ($(this).val() === 'filter-whitenoiser') {
+		// ##############################################
+		// # WHITE NOISER                               #
+		// ##############################################
+		var bufferSize = parseInt($('#effect-buffer').val(), 10);
+		SYNTH.nodes.effect = (function () {
+			var node = SYNTH.context.createScriptProcessor(bufferSize, 1, 1);
+			node.onaudioprocess = function (e) {
+				var input = e.inputBuffer.getChannelData(0),
+					output = e.outputBuffer.getChannelData(0);
+				for (var i = 0; i < input.length; ++i) {
+					output[i] = input[i] + ((Math.random() * 2 - 1) * 0.2); // "* 0.2" is optional
+				}
+			};
+			return node;
+		})();
+	} else if ($(this).val() === 'filter-pinknoiser') {
+		// ##############################################
+		// # PINK NOISER by Paul Kellet                 #
+		// ##############################################
+		var bufferSize = parseInt($('#effect-buffer').val(), 10);
+		SYNTH.nodes.effect = (function () {
+			var b0, b1, b2, b3, b4, b5, b6;
+			b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+			var node = SYNTH.context.createScriptProcessor(bufferSize, 1, 1);
+			node.onaudioprocess = function (e) {
+				var input = e.inputBuffer.getChannelData(0),
+					output = e.outputBuffer.getChannelData(0);
+				for (var i = 0; i < input.length; ++i) {
+					var white = input[i] + (Math.random() * 2 - 1);
+					b0 = 0.99886 * b0 + white * 0.0555179;
+					b1 = 0.99332 * b1 + white * 0.0750759;
+					b2 = 0.96900 * b2 + white * 0.1538520;
+					b3 = 0.86650 * b3 + white * 0.3104856;
+					b4 = 0.55000 * b4 + white * 0.5329522;
+					b5 = -0.7616 * b5 - white * 0.0168980;
+					output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+					output[i] *= 0.11; // (roughly) compensate for gain
+					b6 = white * 0.115926;
+				}
+			}
+			return node;
+		})();
+	} else if ($(this).val() === 'filter-brownnoiser') {
+		// ##############################################
+		// # BROWN NOISER                               #
+		// ##############################################
+		var bufferSize = parseInt($('#effect-buffer').val(), 10);
+		SYNTH.nodes.effect = (function () {
+			var node = SYNTH.context.createScriptProcessor(bufferSize, 1, 1),
+				lastOut = 0.0;
+			node.onaudioprocess = function (e) {
+				var input = e.inputBuffer.getChannelData(0),
+					output = e.outputBuffer.getChannelData(0);
+				for (var i = 0; i < input.length; ++i) {
+					var white = input[i] + (Math.random() * 2 - 1);
+					output[i] = (lastOut + (0.02 * white)) / 1.02;
+					lastOut = output[i];
+					output[i] *= 3.5; // (roughly) compensate for gain
+				}
+			}
+			return node;
+		})();
 	}
 
-	if (SYNTH.effect) {
-		SYNTH.nodes.blender.connect(SYNTH.effect);
-		SYNTH.effect.connect(SYNTH.convolver);
+	if (SYNTH.nodes.effect) {
+		SYNTH.nodes.blender.connect(SYNTH.nodes.effect);
+		SYNTH.nodes.effect.connect(SYNTH.nodes.compressor);
 	} else {
-		SYNTH.nodes.blender.connect(SYNTH.convolver);
+		SYNTH.nodes.blender.connect(SYNTH.nodes.compressor);
 	}
-
 });
 
 $('#moogfilter-cutoff').on('input', function () {
 	var value = parseFloat($(this).val());
-	//console.log('moogfilter-cutoff', 'change', value);
-	SYNTH.effect.cutoff = value;
+	SYNTH.nodes.effect.cutoff = value;
 });
 
 $('#moogfilter-resonance').on('input', function () {
 	var value = parseFloat($(this).val());
-	//console.log('moogfilter-resonance', 'change', value);
-	SYNTH.effect.resonance = value;
+	SYNTH.nodes.effect.resonance = value;
 });
 
 $('#bitcrusher-bits').on('input', function () {
 	var value = parseFloat($(this).val());
-	SYNTH.effect.bits = value;
+	SYNTH.nodes.effect.bits = value;
 });
 
 $('#bitcrusher-normfreq').on('input', function () {
 	var value = parseFloat($(this).val());
-	SYNTH.effect.normfreq = value;
+	SYNTH.nodes.effect.normfreq = value;
 });
-
-*/
 
 // ##############################################
 // # CONVOLVER CONTROLS                         #
