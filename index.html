@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Comet</title>
+		<meta name="application-name" content="Comet">
+		<meta name="author" content="Daniele Veneroni">
+		<meta name="creator" content="Daniele Veneroni">
+		<meta name="publisher" content="Daniele Veneroni">
+		<meta name="description" content="Comet Synth">
+		<meta name="keywords" content="comet,synth,web,audio,sound">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<!-- FAVICONS -->
+		<link rel="icon" sizes="16x16" type="image/png" href="icons/favicon/icon16.png">
+		<link rel="icon" sizes="32x32" type="image/png" href="icons/favicon/icon32.png">
+		<link rel="icon" sizes="64x64" type="image/png" href="icons/favicon/icon64.png">
+		<link rel="icon" sizes="96x96" type="image/png" href="icons/favicon/icon96.png"> <!-- Google TV -->
+		<link rel="icon" sizes="128x128" type="image/png" href="icons/favicon/icon128.png"> <!-- Android Chrome, Chrome Web Store -->
+		<link rel="icon" sizes="160x160" type="image/png" href="icons/favicon/icon160.png"> <!-- Old Opera Speed Dial -->
+		<link rel="icon" sizes="192x192" type="image/png" href="icons/favicon/icon192.png"> <!-- Android Chrome -->
+		<link rel="icon" sizes="196x196" type="image/png" href="icons/favicon/icon196.png"> <!-- Old Android Chrome -->
+		<link rel="icon" sizes="228x228" type="image/png" href="icons/favicon/icon228.png"> <!-- Coast by Opera -->
+
+		<!-- iOS WEB APP -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="apple-touch-icon-precomposed" sizes="180x180" href="icons/ios/icon180.png"> <!-- iPhone 6 Plus -->
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="icons/ios/icon152.png"> <!-- iPad Retina iOS 7+ -->
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="icons/ios/icon144.png"> <!-- iPad Retina -->
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="icons/ios/icon120.png"> <!-- iPhone Retina iOS 7+ -->
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="icons/ios/icon114.png"> <!-- iPhone Retina -->
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="icons/ios/icon76.png"> <!-- iPad Classic iOS 7+ -->
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/ios/icon72.png"> <!-- iPad Classic -->
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="icons/ios/icon60.png"> <!-- iPhone Classic iOS 7+ -->
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="icons/ios/icon57.png"> <!-- iPhone Classic -->
+
+		<!-- WINDOWS WEB APP -->
+		<meta name="msapplication-TileColor" content="#0080C0">
+		<meta name="msapplication-square70x70logo" content="icons/windowsphone/icon128.png">
+		<meta name="msapplication-square150x150logo" content="icons/windowsphone/icon270.png">
+		<meta name="msapplication-square310x310logo" content="icons/windowsphone/icon558.png">
+
+		<!-- STYLESHEETS -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Audiowide">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Monoton">
+		<link rel="stylesheet" type="text/css" href="css/comet-icons.css">
+		<link rel="stylesheet" type="text/css" href="css/comet.min.css">
+	</head>
+	<body>
+		<div id="splash-screen">
+			<h1>COMET</h1>
+		</div>
+
+		<canvas id="surface"></canvas>
+		<div id="keyboard" hidden></div>
+
+		<div class="sidebar sidebar-right">
+			<button id="button-info" data-module="info" style="background-image: url('icons/favicon/icon64.png'); background-position: center"></button>
+			<button id="button-preset" data-module="preset">PRS</button>
+			<button id="button-osc" data-module="osc">OSC</button>
+			<button id="button-filter" data-module="filter">BQF</button>
+			<button id="button-effect" data-module="effect">EFF</button>
+			<button id="button-compressor" data-module="compressor">DCM</button>
+			<button id="button-master" data-module="master">MST</button>
+			<button id="button-animation" data-module="animation">ANI</button>
+		</div>
+
+		<!-- INFO -->
+		<div id="module-info" class="module" style="display: none">
+			<h1 class="app-name">COMET</h1>
+			<p class="app-subtitle">Coded with <i class="icon-heart" style="color: #d34d2e"></i> by <a href="http://codepen.io/Venerons/" target="_blank">Daniele Veneroni</a></p>
+			<div class="app-version">1.0.0</div>
+			<p>Comet is an awesome synth built on top of the finest web technologies.</p>
+			<p>You can control the synth using:</p>
+			<p><i class="icon-mouse" style="font-size: 3rem; vertical-align: middle"></i> Mouse</p>
+			<p><i class="icon-touch" style="font-size: 3rem; vertical-align: middle"></i> Touch</p>
+			<p><i class="icon-keyboard" style="font-size: 3rem; vertical-align: middle"></i> Keyboard</p>
+
+			<p style="font-size: 0.7rem; font-style: italic">Icons made by <a href="http://www.flaticon.com/authors/mobiletuxedo" title="Mobiletuxedo">Mobiletuxedo</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></p>
+		</div>
+
+		<!-- PRESET -->
+		<div id="module-preset" class="module" style="display: none">
+			<h1>PRESET</h1>
+			<select id="preset-id" title="Preset">
+				<option value="none">none</option>
+			</select>
+			<button id="preset-save">Save</button>
+			<!--<button id="preset-export">Export</button>-->
+		</div>
+
+		<!-- OSCILLATOR -->
+		<div id="module-osc" class="module" style="display: none">
+			<h1>OSCILLATOR 1</h1>
+			<select id="osc1-type">
+				<option value="sine">Sine</option>
+				<option value="sawtooth">Sawtooth</option>
+				<option value="square">Square</option>
+				<option value="triangle">Triangle</option>
+				<option value="horn">Horn</option>
+				<!--<option value="whitenoise">White Noise</option>-->
+				<!--<option value="pinknoise">Pink Noise</option>-->
+				<!--<option value="brownnoise">Brownian Noise</option>-->
+			</select>
+			<div class="setting-set">
+				<label for="osc1-detune">Detune</label>
+				<input id="osc1-detune" type="range" min="-1200" max="1200" step="1">
+			</div>
+			<div class="setting-set">
+				<label for="osc1-mix">Mix</label>
+				<input id="osc1-mix" type="range" min="0" max="1" step="0.01">
+			</div>
+
+			<h1>OSCILLATOR 2</h1>
+			<select id="osc2-type">
+				<option value="none">none</option>
+				<option value="sine">Sine</option>
+				<option value="sawtooth">Sawtooth</option>
+				<option value="square">Square</option>
+				<option value="triangle">Triangle</option>
+				<option value="horn">Horn</option>
+				<!--<option value="whitenoise">White Noise</option>-->
+				<!--<option value="pinknoise">Pink Noise</option>-->
+				<!--<option value="brownnoise">Brownian Noise</option>-->
+			</select>
+			<div class="setting-set">
+				<label for="osc2-detune">Detune</label>
+				<input id="osc2-detune" type="range" min="-1200" max="1200" step="1">
+			</div>
+			<div class="setting-set">
+				<label for="osc2-mix">Mix</label>
+				<input id="osc2-mix" type="range" min="0" max="1" step="0.01">
+			</div>
+		</div>
+
+		<!-- BIQUAD FILTER -->
+		<div id="module-filter" class="module" style="display: none">
+			<h1>BIQUAD FILTER</h1>
+			<select id="filter-type" title="Filter Type">
+				<option value="lowpass">Low Pass Filter</option>
+				<option value="highpass">High Pass Filter</option>
+				<option value="bandpass">Band Pass Filter</option>
+				<option value="lowshelf">Low Shelf Filter</option>
+				<option value="highshelf">High Shelf Filter</option>
+				<option value="peaking">Peaking Filter</option>
+				<option value="notch">Notch Filter</option>
+				<option value="allpass">All Pass Filter</option>
+			</select>
+			<div class="setting-set">
+				<label for="filter-detune">Detune</label>
+				<input id="filter-detune" type="range" min="-1200" max="1200" step="1">
+			</div>
+			<div class="setting-set">
+				<label for="filter-frequency">Frequency</label>
+				<input id="filter-frequency" type="range" min="40" max="24000" step="1">
+			</div>
+			<div class="setting-set">
+				<label for="filter-quality">Quality</label>
+				<input id="filter-quality" type="range" min="0" max="30" step="0.03">
+				<!-- min: 0.0001 - max: 1000 - step: 0.0001 -->
+			</div>
+			<div class="setting-set">
+				<label for="filter-gain">Gain</label>
+				<input id="filter-gain" type="range" min="-40" max="40" step="1">
+			</div>
+		</div>
+
+		<!-- EFFECT -->
+		<div id="module-effect" class="module" style="display: none">
+			<h1>EFFECT</h1>
+			<select id="effect-type" title="Effect Type">
+				<option value="none">none</option>
+				<optgroup label="Filters">
+					<option value="filter-pinking">Pinking Filter</option>
+					<option value="filter-moog">Moog Filter</option>
+					<option value="filter-bitcrusher1">BitCrusher 1</option>
+					<option value="filter-bitcrusher2" disabled>BitCrusher 2</option>
+				</optgroup>
+				<optgroup label="Delays">
+					<option value="delay-feedback" disabled>Feedback Delay</option>
+				</optgroup>
+				<optgroup label="Waveshapers">
+					<option value="waveshaper-distorsion" disabled>Distorsion</option>
+				</optgroup>
+				<optgroup label="Convolvers">
+					<option value="convolver-noise">Noise Convolver</option>
+					<option value="convolver-hall">Hall Reverb</option>
+					<option value="convolver-telephone">Telephone</option>
+					<option value="convolver-muffler">Muffler</option>
+					<option value="convolver-spring_feedback">Spring Feedback</option>
+					<option value="convolver-echo">Echo</option>
+				</optgroup>
+				<optgroup label="Noisers">
+					<option value="noise-noiser1" disabled>Noiser 1</option>
+					<option value="noise-noiser2" disabled>Noiser 2</option>
+					<option value="noise-white" disabled>White Noiser</option>
+					<option value="noise-brown" disabled>Brownian Noiser</option>
+					<option value="noise-pink" disabled>Pink Noiser</option>
+				</optgroup>
+			</select>
+
+			<!-- MOOG FILTER SETTINGS -->
+			<div id="moogfilter-settings" class="knob-set" style="display: none">
+				<div class="setting-set">
+					<label for="moogfilter-cutoff">Cutoff</label>
+					<input id="moogfilter-cutoff" type="range" min="0" max="1" step="0.001" value="0.065">
+				</div>
+				<div class="setting-set">
+					<label for="moogfilter-resonance">Resonance</label>
+					<input id="moogfilter-resonance" type="range" min="0" max="4" step="0.01" value="3.99">
+				</div>
+			</div>
+
+			<!-- BITCRUSHER SETTINGS -->
+			<div id="bitcrusher-settings" class="knob-set" style="display: none">
+				<div class="setting-set">
+					<label for="bitcrusher-bits">Bits</label>
+					<input id="bitcrusher-bits" type="range" min="1" max="16" step="1" value="4">
+				</div>
+				<div class="setting-set">
+					<label for="bitcrusher-normfreq">Normalize Frequency</label>
+					<input id="bitcrusher-normfreq" type="range" min="0" max="1" step="0.1" value="0.1">
+				</div>
+			</div>
+
+			<label for="effect-buffer">Buffer Size</label>
+			<select id="effect-buffer">
+				<option value="256">256</option>
+				<option value="512" selected>512</option>
+				<option value="1024">1024</option>
+				<option value="2048">2048</option>
+				<option value="4096">4096</option>
+				<option value="8192">8192</option>
+				<option value="16384">16384</option>
+			</select>
+		</div>
+
+		<!-- DYNAMICS COMPRESSOR -->
+		<div id="module-compressor" class="module" style="display: none">
+			<h1>DYNAMICS COMPRESSOR</h1>
+			<div class="setting-set">
+				<label for="compressor-threshold">Threshold</label>
+				<input id="compressor-threshold" type="range" min="-100" max="0" step="0.1">
+			</div>
+			<div class="setting-set">
+				<label for="compressor-knee">Knee</label>
+				<input id="compressor-knee" type="range" min="0" max="40" step="0.1">
+			</div>
+			<div class="setting-set">
+				<label for="compressor-ratio">Ratio</label>
+				<input id="compressor-ratio" type="range" min="1" max="20" step="1">
+			</div>
+			<div class="setting-set">
+				<label for="compressor-reduction">Reduction</label>
+				<input id="compressor-reduction" type="range" min="-20" max="0" step="1">
+			</div>
+			<div class="setting-set">
+				<label for="compressor-attack">Attack</label>
+				<input id="compressor-attack" type="range" min="0" max="1" step="0.001">
+			</div>
+			<div class="setting-set">
+				<label for="compressor-release">Release</label>
+				<input id="compressor-release" type="range" min="0" max="1" step="0.001">
+			</div>
+		</div>
+
+		<!-- MASTER -->
+		<div id="module-master" class="module" style="display: none">
+			<h1>MASTER</h1>
+			<div class="setting-set">
+				<label for="master-volume">Volume</label>
+				<input id="master-volume" type="range" min="0" max="1" step="0.01">
+			</div>
+			<div class="setting-set">
+				<label for="master-pan">Pan</label>
+				<input id="master-pan" type="range" min="-1" max="1" step="0.01">
+			</div>
+		</div>
+
+		<!-- ANIMATION -->
+		<div id="module-animation" class="module" style="display: none">
+			<h1>ANIMATION</h1>
+			<select id="animation-type" title="Graphic Type">
+				<option value="none">none</option>
+				<optgroup label="Spectrum">
+					<option value="spectrum-linear">Linear</option>
+					<option value="spectrum-round">Round</option>
+					<option value="spectrum-roundinset">Inset Round</option>
+				</optgroup>
+				<optgroup label="Oscilloscope">
+					<option value="oscilloscope-stroked">Stroked</option>
+					<option value="oscilloscope-filled">Filled</option>
+				</optgroup>
+				<optgroup label="Interactive">
+					<option value="blackboard">Blackboard</option>
+				</optgroup>
+			</select>
+			<label for="animation-analyser-fft">FFT Size</label>
+			<select id="animation-analyser-fft">
+				<option value="32">32</option>
+				<option value="64">64</option>
+				<option value="128">128</option>
+				<option value="256">256</option>
+				<option value="512">512</option>
+				<option value="1024">1024</option>
+				<option value="2048">2048</option>
+			</select>
+			<div class="setting-set">
+				<label for="animation-analyser-smoothingTimeConstant">Smoothing Time Constant</label>
+				<input id="animation-analyser-smoothingTimeConstant" type="range" min="0" max="1" step="0.1">
+			</div>
+			<div class="setting-set">
+				<label for="animation-analyser-minDecibels">Min Decibels</label>
+				<input id="animation-analyser-minDecibels" type="range" min="-100" max="-30" step="1">
+			</div>
+			<div class="setting-set">
+				<label for="animation-analyser-maxDecibels">Max Decibels</label>
+				<input id="animation-analyser-maxDecibels" type="range" min="-30" max="100" step="1">
+			</div>
+		</div>
+
+		<script type="application/javascript" src="js/lib/palette.min.js"></script>
+		<script type="application/javascript" src="js/lib/hand-1.3.8.min.js"></script>
+		<script type="application/javascript" src="js/lib/localforage.js"></script>
+		<script type="application/javascript" src="js/lib/jquery-2.1.4.min.js"></script>
+		<script type="application/javascript" src="js/lib/raphael-2.1.2.js"></script>
+		<script type="application/javascript" src="js/lib/qwerty-hancock.js"></script>
+		<script type="application/javascript" src="js/comet.min.js"></script>
+	</body>
+</html>
