@@ -621,7 +621,7 @@ $('#effect-type').on('change', function () {
 					output[i] *= 0.11; // (roughly) compensate for gain
 					b6 = input[i] * 0.115926;
 				}
-			}
+			};
 			return node;
 		})();
 	} else if ($(this).val() === 'filter-moog') {
@@ -654,7 +654,7 @@ $('#effect-type').on('change', function () {
 					in4 = out3;
 					output[i] = out4;
 				}
-			}
+			};
 			return node;
 		})();
 		$('#moogfilter-cutoff, #moogfilter-resonance').trigger('input');
@@ -726,7 +726,7 @@ $('#effect-type').on('change', function () {
 					output[i] *= 0.11; // (roughly) compensate for gain
 					b6 = white * 0.115926;
 				}
-			}
+			};
 			return node;
 		})();
 	} else if ($(this).val() === 'filter-brownnoiser') {
@@ -746,7 +746,7 @@ $('#effect-type').on('change', function () {
 					lastOut = output[i];
 					output[i] *= 3.5; // (roughly) compensate for gain
 				}
-			}
+			};
 			return node;
 		})();
 	} else if ($(this).val().indexOf('convolver') !== -1) {
@@ -1190,7 +1190,7 @@ $('#preset-id').on('change', function () {
 $('#preset-save').on('click', function () {
 	var name = prompt('Preset name');
 	if (name) {
-		var tmpSettings = $.extend(true, {}, SYNTH.settings);
+		var tmpSettings = $.extend(true, {}, SYNTH.settings),
 			preset = $.extend(true, tmpSettings, {
 				id: Date.now(),
 				name: name
