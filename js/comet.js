@@ -166,7 +166,7 @@ var SYNTH = {
 		var osc2, mix2;
 		if (settings.osc2.type !== 'none') {
 			osc2 = SYNTH.context.createOscillator();
-			if (SYNTH.wavetables[settings.osc1.type]) {
+			if (SYNTH.wavetables[settings.osc2.type]) {
 				osc2.setPeriodicWave(SYNTH.wavetables[settings.osc2.type].wave);
 			} else {
 				osc2.type = settings.osc2.type;
@@ -511,6 +511,81 @@ https://kevincennis.github.io/transfergraph/
 
 */
 
+(function () {
+	SYNTH.buffers = {};
+
+	var files = [
+		{ name: 'convolver-echo',            url: 'assets/echo.wav' },
+		{ name: 'convolver-hall',            url: 'assets/hall.ogg' },
+		{ name: 'convolver-muffler',         url: 'assets/muffler.wav' },
+		{ name: 'convolver-spring_feedback', url: 'assets/spring_feedback.wav' },
+		{ name: 'convolver-telephone',       url: 'assets/telephone.wav' }
+	];
+
+	var $select = $('#effect-type');
+	/*
+	if (window.fetch) {
+		// USING FETCH API
+		files.forEach(function (file) {
+			fetch(file.url).then(function(response) {
+				//console.log(response.type, response.URL, response.useFinalURL, response.status, response.ok, response.statusText, response.headers, response.bodyUsed);
+				if (!response.ok) {
+					console.error('"' + file.name + '" network response was not ok [ status: ' + response.status + ' ' + response.statusText + ' ]');
+				} else {
+					response.arrayBuffer().then(function (buffer) {
+						SYNTH.context.decodeAudioData(buffer).then(function (buffer) {
+							SYNTH.buffers[file.name] = buffer;
+							$select.find('option[value="' + file.name + '"]').prop('disabled', false);
+						}).catch(function (e) {
+							console.log('Error on "' + file.name + '" decodeAudioData [ERROR: ' + e.toString() + ']');
+						});
+					});
+				}
+			}).catch(function (error) {
+				console.error('"' + file.name + '" network error [ message: ' + error.message + ' ]');
+			});
+		});
+	} else {
+	*/
+		// USING XMLHttpRequest
+		files.forEach(function (file) {
+			var request = new XMLHttpRequest();
+			request.onload = function (e) {
+				if (request.readyState !== 4 || request.status < 200 || request.status > 299) {
+					console.error('"' + file.name + '" network response was not ok [ readyState: ' + request.readyState + ' - status: ' + request.status + ' ' + request.statusText + ' ]');
+				} else {
+					SYNTH.context.decodeAudioData(request.response).then(function (buffer) {
+						SYNTH.buffers[file.name] = buffer;
+						$select.find('option[value="' + file.name + '"]').prop('disabled', false);
+					}).catch(function (e) {
+						console.log('Error on "' + file.name + '" decodeAudioData [ERROR: ' + e.toString() + ']');
+					});
+				}
+			};
+			request.onerror = function (e) {
+				console.error('"' + file.name + '" network error', e);
+			};
+			request.open('GET', file.url, true);
+			request.responseType = 'arraybuffer';
+			request.send();
+		});
+	/*
+	}
+	*/
+	// NOISE CONVOLVER
+	(function () {
+		var noiseBuffer = SYNTH.context.createBuffer(2, 0.5 * SYNTH.context.sampleRate, SYNTH.context.sampleRate),
+			left = noiseBuffer.getChannelData(0),
+			right = noiseBuffer.getChannelData(1);
+		for (var i = 0; i < noiseBuffer.length; ++i) {
+			left[i] = Math.random() * 2 - 1;
+			right[i] = Math.random() * 2 - 1;
+		}
+		SYNTH.buffers['convolver-noise'] = noiseBuffer;
+		$select.find('option[value="convolver-noise"]').prop('disabled', false);
+	})();
+})();
+
 $('#effect-buffer').on('change', function () {
 	$('#effect-type').trigger('change');
 });
@@ -674,6 +749,19 @@ $('#effect-type').on('change', function () {
 			}
 			return node;
 		})();
+	} else if ($(this).val().indexOf('convolver') !== -1) {
+		// ##############################################
+		// # CONVOLVERS                                 #
+		// ##############################################
+		var convolverType = $(this).val();
+		if (SYNTH.buffers[convolverType]) {
+			SYNTH.nodes.effect = (function () {
+				var node = SYNTH.context.createConvolver();
+				//node.normalize = true; // default
+				node.buffer = SYNTH.buffers[convolverType];
+				return node;
+			})();
+		}
 	}
 
 	if (SYNTH.nodes.effect) {
@@ -703,145 +791,6 @@ $('#bitcrusher-normfreq').on('input', function () {
 	var value = parseFloat($(this).val());
 	SYNTH.nodes.effect.normfreq = value;
 });
-
-// ##############################################
-// # CONVOLVER CONTROLS                         #
-// ##############################################
-/*
-
-SYNTH.convolverBuffers = {
-	'none': null
-};
-
-// ##############################################
-// # LOAD IMPULSE RESPONSES                     #
-// ##############################################
-
-(function () {
-	var loadAudioBuffer = function (url) {
-		return new Promise(function (resolve, reject) {
-			var request = new XMLHttpRequest();
-			request.open('GET', url, true);
-			request.responseType = 'arraybuffer';
-			request.onload = function () {
-				if (request.status === 200) {
-					SYNTH.context.decodeAudioData(request.response, function (buffer) {
-						resolve(buffer);
-					}, function (e) {
-						reject(new Error('Error on decodeAudioData [ERROR: ' + e.toString() + ']'));
-					});
-				} else {
-					reject(new Error('Error on request onload [ERROR CODE: ' + request.statusText + ']'));
-				}
-			};
-			request.onerror = function () {
-				reject(new Error('Error on request onerror'));
-			};
-			request.send();
-		});
-	};
-
-	[
-		{ name: 'hall', url: 'assets/hall.ogg' },
-		{ name: 'telephone', url: 'assets/telephone.wav' },
-		{ name: 'muffler', url: 'assets/muffler.wav' },
-		{ name: 'spring_feedback', url: 'assets/spring_feedback.wav' },
-		{ name: 'echo', url: 'assets/echo.wav' }
-	].forEach(function (item) {
-		loadAudioBuffer(item.url).then(function (buffer) {
-			SYNTH.convolverBuffers[item.name] = buffer;
-		}, function (error) {
-			console.error(error);
-		});
-	});
-
-	// NOISE CONVOLVER
-	(function () {
-		var noiseBuffer = SYNTH.context.createBuffer(2, 0.5 * SYNTH.context.sampleRate, SYNTH.context.sampleRate),
-			left = noiseBuffer.getChannelData(0),
-			right = noiseBuffer.getChannelData(1);
-		for (var i = 0; i < noiseBuffer.length; i++) {
-			left[i] = Math.random() * 2 - 1;
-			right[i] = Math.random() * 2 - 1;
-		}
-		SYNTH.convolverBuffers.noise = noiseBuffer;
-	})();
-
-})();
-
-$('#convolver-type').on('change', function () {
-	SYNTH.settings.convolver.type = $(this).val();
-	SYNTH.convolver.buffer = SYNTH.convolverBuffers[$(this).val()];
-});
-
-*/
-
-/*
-
-var buffers = {};
- 
-(function () {
-	var files = [
-		{ name: 'One', url: 'one.txt' },
-		{ name: 'Two', url: 'two.txt' },
-		{ name: 'Three', url: 'three.txt' }
-	];
-	var reloadSelect = function () {
-		var array = [];
-		for (var name in buffers) {
-			if (buffers.hasOwnProperty(name)) {
-				array.push(name);
-			}
-		}
-		var $select = $('select'),
-			selected = $select.val();
-		$select.empty();
-		array.sort().forEach(function (name) {
-			$select.append('<option value="' + name + '">' + name + '</option>');
-		});
-		$select.val(selected);
-	};
- 
-	if (window.fetch) {
-		// USING FETCH API
-		files.forEach(function (file) {
-			fetch(file.url).then(function(response) {
-				//console.log(response.type, response.URL, response.useFinalURL, response.status, response.ok, response.statusText, response.headers, response.bodyUsed);
-				if (!response.ok) {
-					console.error('"' + file.name + '" network response was not ok [ status: ' + response.status + ' ' + response.statusText + ' ]');
-				} else {
-					response.arrayBuffer().then(function (buffer) {
-						buffers[file.name] = buffer;
-						reloadSelect();
-					});
-				}
-			}).catch(function (error) {
-				console.error('"' + file.name + '" network error [ message: ' + error.message + ' ]');
-			});
-		});
-	} else {
-		// USING XMLHttpRequest
-		files.forEach(function (file) {
-			var request = new XMLHttpRequest();
-			request.onload = function (e) {
-				if (request.readyState !== 4 || request.status < 200 || request.status > 299) {
-					console.error('"' + file.name + '" network response was not ok [ readyState: ' + request.readyState + ' - status: ' + request.status + ' ' + request.statusText + ' ]');
-				} else {
-					buffers[file.name] = request.response; // buffer
-					reloadSelect();
-				}
-			};
-			request.onerror = function (e) {
-				console.error('"' + file.name + '" network error', e);
-			};
-			request.open('GET', file.url, true);
-			request.responseType = 'arraybuffer';
-			request.send();
-		});
-	}
-})();
-
-*/
 
 // ##############################################
 // # DYNAMICS COMPRESSOR                        #
@@ -909,10 +858,9 @@ window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAni
 var paper = new Palette('surface');
 
 window.ANIMATION = {
-	type: SYNTH.settings.animation.type,
 	dataArray: new Uint8Array(SYNTH.nodes.analyser.frequencyBinCount),
 	drawLoop: null,
-	
+
 	hue: 0,
 	maxSpectrumHeight: paper.height / 4 * 3
 };
@@ -929,7 +877,7 @@ $(window).on('resize', adaptScreen).trigger('resize');
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API
 
 function draw() {
-	var animationType = ANIMATION.type;
+	var animationType = SYNTH.settings.animation.type;
 	//console.log('draw', animationType);
 	if (animationType === 'none') {
 		cancelAnimationFrame(ANIMATION.drawLoop);
@@ -1025,9 +973,9 @@ function draw() {
 		// ##############################################
 		SYNTH.nodes.analyser.getByteTimeDomainData(ANIMATION.dataArray);
 		paper.clear();
-		paper.context.lineWidth = 15;
 		ANIMATION.hue = ANIMATION.hue + 0.5 > 360 ? 0 : ANIMATION.hue + 0.5;
 		paper.context.strokeStyle = 'hsl(' + ANIMATION.hue + ', 50%, 50%)';
+		paper.context.lineWidth = 15;
 		paper.context.beginPath();
 		var sliceWidth = paper.width * 1.0 / array.length,
 			x = 0;
@@ -1085,7 +1033,7 @@ function draw() {
 }
 
 $('#animation-type').on('change', function () {
-	ANIMATION.type = $(this).val();
+	SYNTH.settings.animation.type = $(this).val();
 	cancelAnimationFrame(ANIMATION.drawLoop);
 	draw();
 }).trigger('change');
@@ -1186,34 +1134,38 @@ $(window).on('keydown', function (event) {
 // ##############################################
 
 [
-	{ "id": 1, "name": "Default" },
 	{
-		"id": 2,
-		"name": "Classic Electric Bass",
-		"osc1": { "type": "sine", "detune": 0, "mix": 1 },
-		"osc2": { "type": "sine", "detune": 1200, "mix": 1 }
+		"name": "Default"
 	},
 	{
-		"id": 3,
+		"name": "Absolute Leader",
+		"osc1": { "type": "horn", "detune": -5, "mix": 0.68 },
+		"osc2": { "type": "sawtooth", "detune": -1200, "mix": 0.55 },
+		"animation": { "type": "oscilloscope-stroked" }
+	},
+	{
 		"name": "Buzzer",
 		"osc1": { "type": "sawtooth", "detune": 0, "mix": 1 },
 		"osc2": { "type": "sawtooth", "detune": -1200, "mix": 0.5 },
 		"filter": { "type": "lowpass", "detune": 0, "frequency": 3000, "quality": 26, "gain": 0 }
 	},
 	{
-		"id": 4,
 		"name": "ChipChip",
 		"osc1": { "type": "square", "detune": 464, "mix": 1 },
 		"filter": { "type": "highpass", "detune": 0, "frequency": 5000, "quality": 30, "gain": 0 }
 	},
 	{
-		"id": 5,
+		"name": "Classic Electric Bass",
+		"osc1": { "type": "sine", "detune": 0, "mix": 1 },
+		"osc2": { "type": "sine", "detune": 1200, "mix": 1 }
+	},
+	{
 		"name": "Organth",
 		"osc1": { "type": "sawtooth", "detune": -456, "mix": 1 },
 		"filter": { "type": "highpass", "detune": 0, "frequency": 1716, "quality": 9.6, "gain": 18 }
 	}
-].forEach(function (preset) {
-	var tmpSettings = $.extend(true, {}, SYNTH.settings)
+].forEach(function (preset, index) {
+	var tmpSettings = $.extend(true, { id: index }, SYNTH.settings);
 	SYNTH.presets.push($.extend(true, tmpSettings, preset));
 });
 
@@ -1227,7 +1179,7 @@ $('#preset-id').on('change', function () {
 	}
 }).on('update', function (e) {
 	var $select = $(this),
-		precedentValue = $select.val() !== null ? $select.val() : 1;
+		precedentValue = $select.val() !== null ? $select.val() : 0;
 	$select.empty();
 	SYNTH.presets.forEach(function (preset) {
 		$select.append('<option value="' + preset.id + '">' + preset.name + '</option>');
@@ -1238,10 +1190,11 @@ $('#preset-id').on('change', function () {
 $('#preset-save').on('click', function () {
 	var name = prompt('Preset name');
 	if (name) {
-		var preset = $.extend(true, {
-			id: Date.now(),
-			name: name
-		}, SYNTH.settings);
+		var tmpSettings = $.extend(true, {}, SYNTH.settings);
+			preset = $.extend(true, tmpSettings, {
+				id: Date.now(),
+				name: name
+			});
 		SYNTH.presets.push(preset);
 		$('#preset-id').trigger({ type: 'update', toBeSelected: preset.id });
 		/*
