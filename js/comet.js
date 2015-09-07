@@ -50,7 +50,8 @@ var SYNTH = {
 			gain: 0
 		},
 		effect: {
-			type: 'none'
+			type: 'none',
+			buffer: 256
 		},
 		compressor: {
 			threshold: -24,
@@ -105,6 +106,10 @@ var SYNTH = {
 
 		// BLENDER
 		nodes.blender.gain.value = 1;
+
+		// EFFECT - TODO effects settings
+		$('#effect-buffer').val(settings.effect.buffer);
+		$('#effect-type').val(settings.effect.type).trigger('change');
 
 		// DYNAMICS COMPRESSOR
 		nodes.compressor.threshold.value = settings.compressor.threshold;
@@ -506,8 +511,6 @@ $('#filter-gain').on('input', function () {
 
 https://chromium.googlecode.com/svn/trunk/samples/audio/impulse-responses/
 https://stackoverflow.com/questions/7840347/web-audio-api-waveshapernode
-https://stackoverflow.com/questions/22312841/waveshaper-node-in-webaudio-how-to-emulate-distortion
-https://kevincennis.github.io/transfergraph/
 
 */
 
@@ -762,6 +765,40 @@ $('#effect-type').on('change', function () {
 				return node;
 			})();
 		}
+	} else if ($(this).val() === 'waveshaper-distorsion') {
+		// ##############################################
+		// # DISTORSION                                 #
+		// ##############################################
+		SYNTH.nodes.effect = (function () {
+			var node = SYNTH.context.createWaveShaper();
+			var makeDistorsionCurve = function (amount) {
+				var k = typeof amount === 'number' ? amount : 50,
+					n_samples = 44100,
+					curve = new Float32Array(n_samples),
+					deg = Math.PI / 180;
+				for (var i = 0; i < n_samples; ++i) {
+					var x = i * 2 / n_samples - 1;
+					curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+				}
+				return curve;
+			};
+			node.curve = makeDistorsionCurve(100);
+			node.oversample = '4x'; // 'none', '2x', '4x'
+			return node;
+		})();
+	} else if ($(this).val() === 'delay-feedback') {
+		// ##############################################
+		// # FEEDBACK DELAY                             #
+		// ##############################################
+		SYNTH.nodes.effect = (function () {
+			var node = SYNTH.context.createDelay(5.0); // max delayTime in seconds
+			node.delayTime.value = 1/1000*100; // expressed in seconds
+			var feedback = SYNTH.context.createGain();
+			feedback.gain.value = 0.3;
+			node.connect(feedback);
+			feedback.connect(node);
+			return node;
+		})();
 	}
 
 	if (SYNTH.nodes.effect) {

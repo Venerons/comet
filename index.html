@@ -92,14 +92,15 @@
 		<div id="module-osc" class="module" style="display: none">
 			<h1>OSCILLATOR 1</h1>
 			<select id="osc1-type">
-				<option value="sine">Sine</option>
-				<option value="sawtooth">Sawtooth</option>
-				<option value="square">Square</option>
-				<option value="triangle">Triangle</option>
-				<option value="horn">Horn</option>
-				<!--<option value="whitenoise">White Noise</option>-->
-				<!--<option value="pinknoise">Pink Noise</option>-->
-				<!--<option value="brownnoise">Brownian Noise</option>-->
+				<optgroup label="Fundamentals">
+					<option value="sine">Sine</option>
+					<option value="sawtooth">Sawtooth</option>
+					<option value="square">Square</option>
+					<option value="triangle">Triangle</option>
+				</optgroup>
+				<optgroup label="WaveTables">
+					<option value="horn">Horn</option>
+				</optgroup>
 			</select>
 			<div class="setting-set">
 				<label for="osc1-detune">Detune</label>
@@ -113,14 +114,15 @@
 			<h1>OSCILLATOR 2</h1>
 			<select id="osc2-type">
 				<option value="none">none</option>
-				<option value="sine">Sine</option>
-				<option value="sawtooth">Sawtooth</option>
-				<option value="square">Square</option>
-				<option value="triangle">Triangle</option>
-				<option value="horn">Horn</option>
-				<!--<option value="whitenoise">White Noise</option>-->
-				<!--<option value="pinknoise">Pink Noise</option>-->
-				<!--<option value="brownnoise">Brownian Noise</option>-->
+				<optgroup label="Fundamentals">
+					<option value="sine">Sine</option>
+					<option value="sawtooth">Sawtooth</option>
+					<option value="square">Square</option>
+					<option value="triangle">Triangle</option>
+				</optgroup>
+				<optgroup label="WaveTables">
+					<option value="horn">Horn</option>
+				</optgroup>
 			</select>
 			<div class="setting-set">
 				<label for="osc2-detune">Detune</label>
@@ -177,14 +179,12 @@
 					<option value="filter-pinknoiser">Pink Noiser</option>
 					<option value="filter-brownnoiser">Brownian Noiser</option>
 				</optgroup>
-				<!--
 				<optgroup label="Delays">
 					<option value="delay-feedback">Feedback Delay</option>
 				</optgroup>
 				<optgroup label="Waveshapers">
 					<option value="waveshaper-distorsion">Distorsion</option>
 				</optgroup>
-				-->
 				<optgroup label="Convolvers">
 					<option value="convolver-noise" disabled>Noise Convolver</option>
 					<option value="convolver-hall" disabled>Hall Reverb</option>
@@ -221,7 +221,7 @@
 
 			<label for="effect-buffer">Buffer Size</label>
 			<select id="effect-buffer">
-				<option value="256" selected>256</option>
+				<option value="256">256</option>
 				<option value="512">512</option>
 				<option value="1024">1024</option>
 				<option value="2048">2048</option>
