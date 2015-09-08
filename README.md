@@ -3,6 +3,26 @@
 _Copyright (c) 2014-2015 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
 
+## Features
+
+### Synth!
+
+* Many sound presets
+* 2 oscillators with 4 fundamentals waveform and 1 periodic wave, detune and mix
+* Biquad Filter
+* A ton of sound effects like filters, noisers, delays, waveshapers, convolvers
+* Dynamics Compressor
+
+### Control!
+
+* Mouse
+* Touch
+* Keyboard
+
+### Animate!
+
+* Many interactive animations, including sound spectrums, oscilloscopes and more
+
 ## Licensing
 
 Comet  
@@ -19,77 +39,11 @@ You can read the full copy of the GNU General Public License at [LICENSE.md](LIC
 
 Created and maintained by [Daniele Veneroni](http://venerons.github.io) ([@Venerons](http://twitter.com/Venerons)).
 
-## Features
-
-* PRESET (PRS)
-	* Preset
-	* Save | Import | Export
-* SETTINGS
-	* Inputs
-		* Mouse
-		* Touch
-		* Keyboard
-		* MIDI
-		* Microphone
-* OSCILLATORS (OSC)
-	* Oscillator 1
-		* Waveform
-		* Detune
-		* Mix
-	* Oscillator 2
-		* Waveform
-		* Detune
-		* Mix
-* BIQUAD FILTER (BQF)
-	* Filter Type
-	* Detune
-	* Frequency
-	* Quality
-	* Gain
-* EFFECT (EFF)
-	* Effect Type
-		* Pinking Filter
-		* Moog Filter
-		* BitCrusher
-		* White Noiser
-		* Pink Noiser
-		* Brownian Noiser
-		* Noise Convolver
-		* Hall Reverb
-		* Telephone
-		* Muffler
-		* Spring Feedback
-		* Echo
-	* Buffer Size
-* DYNAMICS COMPRESSOR (DCM)
-	* Threshold
-	* Knee
-	* Ratio
-	* Reduction
-	* Attack
-	* Release
-* MASTER (MST)
-	* Volume
-	* Pan
-* ANIMATION (ANI)
-	* Animation Type
-		* Spectrum
-			* Linear
-			* Round
-			* Round Inset
-			* Floating
-		* Oscilloscope
-			* Stroked
-			* Filled
-		* Interactive
-			* Blackboard
-	* FFT Size
-	* Smoothing Time Constant
-	* Min Decibels
-	* Max Decibels
-
 ## TODO Features
 
+* Controls
+	* MIDI
+	* Microphone
 * Presets
 	* Save, Export & Import
 * Oscillators
