@@ -98,7 +98,7 @@
 					<option value="square">Square</option>
 					<option value="triangle">Triangle</option>
 				</optgroup>
-				<optgroup label="WaveTables">
+				<optgroup label="Periodic Waves">
 					<option value="horn">Horn</option>
 				</optgroup>
 			</select>
@@ -120,7 +120,7 @@
 					<option value="square">Square</option>
 					<option value="triangle">Triangle</option>
 				</optgroup>
-				<optgroup label="WaveTables">
+				<optgroup label="Periodic Waves">
 					<option value="horn">Horn</option>
 				</optgroup>
 			</select>
@@ -219,16 +219,18 @@
 				</div>
 			</div>
 
-			<label for="effect-buffer">Buffer Size</label>
-			<select id="effect-buffer">
-				<option value="256">256</option>
-				<option value="512">512</option>
-				<option value="1024">1024</option>
-				<option value="2048">2048</option>
-				<option value="4096">4096</option>
-				<option value="8192">8192</option>
-				<option value="16384">16384</option>
-			</select>
+			<div class="setting-set">
+				<label for="effect-buffer">Buffer Size</label>
+				<select id="effect-buffer">
+					<option value="256">256</option>
+					<option value="512">512</option>
+					<option value="1024">1024</option>
+					<option value="2048">2048</option>
+					<option value="4096">4096</option>
+					<option value="8192">8192</option>
+					<option value="16384">16384</option>
+				</select>
+			</div>
 		</div>
 
 		<!-- DYNAMICS COMPRESSOR -->
@@ -291,16 +293,18 @@
 					<option value="blackboard">Blackboard</option>
 				</optgroup>
 			</select>
-			<label for="animation-analyser-fft">FFT Size</label>
-			<select id="animation-analyser-fft">
-				<option value="32">32</option>
-				<option value="64">64</option>
-				<option value="128">128</option>
-				<option value="256">256</option>
-				<option value="512">512</option>
-				<option value="1024">1024</option>
-				<option value="2048">2048</option>
-			</select>
+			<div class="setting-set">
+				<label for="animation-analyser-fft">FFT Size</label>
+				<select id="animation-analyser-fft">
+					<option value="32">32</option>
+					<option value="64">64</option>
+					<option value="128">128</option>
+					<option value="256">256</option>
+					<option value="512">512</option>
+					<option value="1024">1024</option>
+					<option value="2048">2048</option>
+				</select>
+			</div>
 			<div class="setting-set">
 				<label for="animation-analyser-smoothingTimeConstant">Smoothing Time Constant</label>
 				<input id="animation-analyser-smoothingTimeConstant" type="range" min="0" max="1" step="0.1">

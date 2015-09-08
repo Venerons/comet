@@ -21,7 +21,7 @@ button {
 	background: none;
 	border: 1px solid whitesmoke;
 	border-radius: 3px;
-	margin: 0.25rem 0;
+	//margin: 0.25rem 0;
 	padding: 0.5rem;
 
 	&::-moz-focus-inner {
@@ -38,7 +38,7 @@ select {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	width: 100%;
-	height: 44px;
+	height: 35px;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
@@ -46,7 +46,7 @@ select {
 	border: 1px solid whitesmoke;
 	border-radius: 3px;
 	margin: 0.25rem 0;
-	padding: 0.5rem;
+	padding: 0 0.5rem;
 
 	option {
 		padding: 0.1rem;
@@ -128,6 +128,7 @@ p {
 	top: 0.5rem;
 	right: calc(0.5rem + 60px);
 	min-width: 300px;
+	width: 450px;
 	padding: 0.8rem;
 	border-radius: 5px;
 	background: #333;
@@ -154,11 +155,11 @@ p {
 	flex-flow: row nowrap;
 	justify-content: space-around;
 	align-items: center;
-	margin: 0.5rem 0;
+	margin: 1.25rem 0;
 
 	label {
 		display: inline-block;
-		width: 30%;
+		width: 60%;
 	}
 	input {
 		flex-grow: 1;
@@ -193,6 +194,97 @@ p {
 	display: block;
 }
 
+input[type=range] {
+	-webkit-appearance: none;
+	width: 100%;
+	margin: 0px 0;
+}
+input[type=range]:focus {
+	outline: none;
+}
+
+// FIREFOX
+
+input[type=range]::-moz-range-track {
+	width: 100%;
+	height: 25px;
+	cursor: pointer;
+	border-radius: 0;
+	border: 1px solid white;
+	background: transparent;
+}
+input[type=range]::-moz-range-thumb {
+	height: 25px;
+	width: 25px;
+	cursor: pointer;
+	border: none;
+	border-radius: 0;
+	background: white;
+}
+
+// WEBKIT / CHROME
+
+input[type=range]::-webkit-slider-runnable-track {
+	width: 100%;
+	height: 25px;
+	cursor: pointer;
+	border-radius: 0;
+	border: 1px solid white;
+	background: #333;
+}
+/*
+input[type=range]:focus::-webkit-slider-runnable-track {
+	background: #8080ff;
+}
+*/
+input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	height: 25px;
+	width: 25px;
+	cursor: pointer;
+	border: none;
+	border-radius: 0;
+	background: white;
+	margin-top: -2px;
+}
+
+// IE
+
+input[type=range]::-ms-track {
+	width: 100%;
+	height: 25px;
+	cursor: pointer;
+	background: transparent;
+	border-color: transparent;
+	color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+	border-radius: 0;
+	border: 1px solid white;
+	background: white; /* transparent */
+}
+input[type=range]::-ms-fill-upper {
+	border-radius: 0;
+	border: 1px solid white;
+	background: transparent;
+}
+input[type=range]::-ms-thumb {
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+	border: none;
+	border-radius: 0;
+	background: white;
+}
+/*
+input[type=range]:focus::-ms-fill-lower {
+	background: #0000ff;
+}
+input[type=range]:focus::-ms-fill-upper {
+	background: #8080ff;
+}
+*/
+
 /*
 
 #D34D2E
@@ -209,46 +301,55 @@ p {
 */
 
 $modules: (
-    preset: #D34D2E,
-    osc: #FF9900,
-    filter: #F3CF3A,
-    effect: #3DC186,
-    compressor: #37BBBA,
-    master: #4DC3FA,
-    animation: #FB6368
+		preset: #D34D2E,
+		osc: #FF9900,
+		filter: #F3CF3A,
+		effect: #3DC186,
+		compressor: #37BBBA,
+		master: #4DC3FA,
+		animation: #FB6368
 );
 
 @each $module, $color in $modules {
-    #module-#{$module} {
-        color: $color;
-    }
+	#module-#{$module} {
+		color: $color;
+	}
 
-    #button-#{$module} {
-    	color: $color;
-    	border: 1px solid $color;
-    	//background: transparentize($color, 0.95);
+	#button-#{$module} {
+		color: $color;
+		border: 1px solid $color;
+		//background: transparentize($color, 0.95);
 
-    	&:hover, &:focus, &:active {
-    		background: $color;
-    	}
-    }
+		&:hover, &:focus, &:active {
+			background: $color;
+		}
+	}
 
-    #module-#{$module} {
-    	color: $color;
-    	border: 1px solid $color;
+	#module-#{$module} {
+		color: $color;
+		border: 1px solid $color;
 
-    	h1 {
-    		color: $color;
-    	}
-    	select, button {
-    		border: 1px solid $color;
-    	}
-    	button {
-    		&:hover, &:focus, &:active {
-    			background: $color;
-    		}
-    	}
-    }
+		h1 {
+			color: $color;
+		}
+		select, button {
+			border: 1px solid $color;
+		}
+		button {
+			&:hover, &:focus, &:active {
+				background: $color;
+			}
+		}
+		input[type=range] {
+			&::-moz-range-track { border-color: $color !important; }
+			&::-moz-range-thumb { background: $color !important; }
+			&::-webkit-slider-runnable-track { border-color: $color !important; }
+			&::-webkit-slider-thumb { background: $color !important; }
+			&::-ms-fill-lower { border-color: $color !important; background: $color !important; }
+			&::-ms-fill-upper { border-color: $color !important; }
+			&::-ms-thumb { background: $color !important; }
+		}
+	}
 }
 
 #button-info {
