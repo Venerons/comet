@@ -1100,73 +1100,6 @@ $('#animation-analyser-maxDecibels').on('input', function () {
 });
 
 // ##############################################
-// # KEYBOARD                                   #
-// ##############################################
-
-(function () {
-	function connectKeyboard(startNote) {
-		var keyboardElement = document.getElementById('keyboard');
-		if (keyboardElement) {
-			keyboardElement.remove();
-		}
-		keyboardElement = document.createElement('div');
-		keyboardElement.hidden = true;
-		keyboardElement.setAttribute('id', 'keyboard');
-		document.body.appendChild(keyboardElement);
-
-		var keyboard = new QwertyHancock({
-			id: 'keyboard',
-			width: window.innerWidth,
-			height: window.innerHeight / 2,
-			octaves: 2,
-			startNote: startNote,
-			whiteKeyColour: '#E7ECEE',
-			blackKeyColour: '#1F2022',
-			activeColour: '#46C891',
-			borderColour: 'black',
-			keyboardLayout: 'en'
-		});
-
-		keyboard.keyDown = function (note, frequency) {
-			SYNTH.addVoice('keyboard-' + note, frequency, 0.5);
-		};
-
-		keyboard.keyUp = function (note, frequency) {
-			SYNTH.removeVoice('keyboard-' + note);
-		};
-
-		return keyboard;
-	}
-
-	connectKeyboard('C4');
-})();
-
-/*
-
-// Z	-> Octave Down
-// X	-> Octave Up
-
-var keyboardFirstNote = 4;
-$(window).on('keydown', function (event) {
-	if (event.keyCode === 90) {
-		// PRESSED Z
-		keyboardFirstNote--;
-		if (keyboardFirstNote < 0) {
-			keyboardFirstNote = 0;
-		}
-		connectKeyboard('C' + keyboardFirstNote);
-	} else if (event.keyCode === 88) {
-		// PRESSED X
-		keyboardFirstNote++;
-		if (keyboardFirstNote > 9) {
-			keyboardFirstNote = 9;
-		}
-		connectKeyboard('C' + keyboardFirstNote);
-	}
-});
-*/
-
-// ##############################################
 // # PRESET CONTROLS                            #
 // ##############################################
 
@@ -1275,6 +1208,73 @@ localforage.getItem('presets', function (error, value) {
 				//console.log('Presets saved.');
 			}
 		});
+	}
+});
+*/
+
+// ##############################################
+// # KEYBOARD                                   #
+// ##############################################
+
+(function () {
+	function connectKeyboard(startNote) {
+		var keyboardElement = document.getElementById('keyboard');
+		if (keyboardElement) {
+			keyboardElement.remove();
+		}
+		keyboardElement = document.createElement('div');
+		keyboardElement.hidden = true;
+		keyboardElement.setAttribute('id', 'keyboard');
+		document.body.appendChild(keyboardElement);
+
+		var keyboard = new QwertyHancock({
+			id: 'keyboard',
+			width: window.innerWidth,
+			height: window.innerHeight / 2,
+			octaves: 2,
+			startNote: startNote,
+			whiteKeyColour: '#E7ECEE',
+			blackKeyColour: '#1F2022',
+			activeColour: '#46C891',
+			borderColour: 'black',
+			keyboardLayout: 'en'
+		});
+
+		keyboard.keyDown = function (note, frequency) {
+			SYNTH.addVoice('keyboard-' + note, frequency, 0.5);
+		};
+
+		keyboard.keyUp = function (note, frequency) {
+			SYNTH.removeVoice('keyboard-' + note);
+		};
+
+		return keyboard;
+	}
+
+	connectKeyboard('C4');
+})();
+
+/*
+
+// Z	-> Octave Down
+// X	-> Octave Up
+
+var keyboardFirstNote = 4;
+$(window).on('keydown', function (event) {
+	if (event.keyCode === 90) {
+		// PRESSED Z
+		keyboardFirstNote--;
+		if (keyboardFirstNote < 0) {
+			keyboardFirstNote = 0;
+		}
+		connectKeyboard('C' + keyboardFirstNote);
+	} else if (event.keyCode === 88) {
+		// PRESSED X
+		keyboardFirstNote++;
+		if (keyboardFirstNote > 9) {
+			keyboardFirstNote = 9;
+		}
+		connectKeyboard('C' + keyboardFirstNote);
 	}
 });
 */
@@ -1409,6 +1409,67 @@ $('#surface')
 	});
 
 // ##############################################
+// # MIDI                                       #
+// ##############################################
+
+// https://webaudio.github.io/web-midi-api/
+
+if (navigator.requestMIDIAccess) {
+	// use navigator.requestMIDIAccess({ sysex: true }) for system exlusive access
+	navigator.requestMIDIAccess().then(function (midiAccess) {
+		console.log('MIDI ready!', midiAccess);
+
+		/*
+		for (var entry of midiAccess.inputs) {
+			var input = entry[1];
+			console.log('Input',
+				'\n\tid: ', input.id,
+				'\n\ttype: ', input.type,
+				'\n\tame: ', input.name,
+				'\n\tmanufacturer: ', input.manufacturer,
+				'\n\tversion: ', input.version);
+		}
+
+		for (var entry of midiAccess.outputs) {
+			var output = entry[1];
+			console.log('Output',
+				'\n\tid: ', output.id,
+				'\n\ttype: ', output.type,
+				'\n\tame: ', output.name,
+				'\n\tmanufacturer: ', output.manufacturer,
+				'\n\tversion: ', output.version);
+		}
+		*/
+
+		midiAccess.inputs.forEach(function (input) {
+			input.onmidimessage = function (event) {
+				/*
+				var data = [];
+				for (var i = 0; i < event.data.length; ++i) {
+					data.push('0x' + event.data[i].toString(16));
+				}
+				console.log('MIDI Message',
+					'\n\ttimestamp: ', event.timestamp,
+					'\n\tbytes length: ', event.data.length,
+					'\n\tdata: ', '[' + data.join(', ') + ']');
+				*/
+				var command = event.data[0] & 0xf0, // Mask off the lower nibble (MIDI channel, which we don't care about)
+					note = event.data[1],
+					velocity = event.data[2],
+					frequency = Math.pow(2, (note - 69) / 12) * 440;
+				if (command === 0x90 && velocity !== 0) {
+					SYNTH.addVoice('midi-' + note, frequency, velocity * 100 / 127);
+				} else if (command === 0x80 || velocity === 0) {
+					SYNTH.removeVoice('midi-' + note);
+				}
+			};
+		});
+	}, function (message) {
+		console.log('Failed to get MIDI access', message);
+	});
+}
+
+// ##############################################
 // # FIXS & UTILITIES                           #
 // ##############################################
 
@@ -1428,48 +1489,6 @@ $(document).on('visibilitychange mozvisibilitychange msvisibilitychange webkitvi
 });
 
 /*
-
-// https://webaudio.github.io/web-midi-api/
-
-// use navigator.requestMIDIAccess({ sysex: true }) for system exlusive access
-navigator.requestMIDIAccess().then(function (midiAccess) {
-	console.log('MIDI ready!', midiAccess);
-
-	for (var entry of midiAccess.inputs) {
-		var input = entry[1];
-		console.log('Input',
-			'\n\tid: ', input.id,
-			'\n\ttype: ', input.type,
-			'\n\tame: ', input.name,
-			'\n\tmanufacturer: ', input.manufacturer,
-			'\n\tversion: ', input.version);
-	}
-
-	for (var entry of midiAccess.outputs) {
-		var output = entry[1];
-		console.log('Output',
-			'\n\tid: ', output.id,
-			'\n\ttype: ', output.type,
-			'\n\tame: ', output.name,
-			'\n\tmanufacturer: ', output.manufacturer,
-			'\n\tversion: ', output.version);
-	}
-
-	midiAccess.inputs.forEach(function (input) {
-		input.onmidimessage = function (event) {
-			var data = [];
-			for (var i = 0; i < event.data.length; ++i) {
-				data.push('0x' + event.data[i].toString(16));
-			}
-			console.log('MIDI Message',
-				'\n\ttimestamp: ', event.timestamp,
-				'\n\tbytes length: ', event.data.length,
-				'\n\tdata: ', '[' + data.join(', ') + ']');
-		};
-	});
-}, function (message) {
-	console.log('Failed to get MIDI access', message);
-});
 
 // MICROPHONE ##########
 
