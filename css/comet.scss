@@ -307,7 +307,8 @@ $modules: (
 		effect: #3DC186,
 		compressor: #37BBBA,
 		master: #4DC3FA,
-		animation: #FB6368
+		animation: #FB6368,
+		midi: whitesmoke
 );
 
 @each $module, $color in $modules {

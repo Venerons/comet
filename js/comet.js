@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 Daniele Veneroni.
+// Copyright (c) 2014-2016 Daniele Veneroni.
 // Released under GPLv3 License. See LICENSE.md for further information.
 'use strict';
 
@@ -7,6 +7,7 @@
 // ##############################################
 
 $('#splash-screen').delay(2000).fadeOut();
+$('#module-info').delay(8000).fadeOut();
 
 // ##############################################
 // # SIDEBAR                                    #
@@ -115,7 +116,11 @@ var SYNTH = {
 		nodes.compressor.threshold.value = settings.compressor.threshold;
 		nodes.compressor.knee.value = settings.compressor.knee;
 		nodes.compressor.ratio.value = settings.compressor.ratio;
-		nodes.compressor.reduction.value = settings.compressor.reduction;
+		try {
+			nodes.compressor.reduction.value = settings.compressor.reduction;
+		} catch (e) {
+			console.warn('compressor.reduction error', e);
+		}
 		nodes.compressor.attack.value = settings.compressor.attack;
 		nodes.compressor.release.value = settings.compressor.release;
 
@@ -854,7 +859,11 @@ $('#compressor-ratio').on('input', function () {
 $('#compressor-reduction').on('input', function () {
 	var value = parseFloat($(this).val());
 	SYNTH.settings.compressor.reduction = value;
-	SYNTH.nodes.compressor.reduction.value = value;
+	try {
+		SYNTH.nodes.compressor.reduction.value = value;
+	} catch (e) {
+		console.warn('compressor.reduction error', e);
+	}
 });
 
 $('#compressor-attack').on('input', function () {
@@ -1414,58 +1423,70 @@ $('#surface')
 
 // https://webaudio.github.io/web-midi-api/
 
-if (navigator.requestMIDIAccess) {
-	// use navigator.requestMIDIAccess({ sysex: true }) for system exlusive access
-	navigator.requestMIDIAccess().then(function (midiAccess) {
-		console.log('MIDI ready!', midiAccess);
+if (!navigator.requestMIDIAccess) {
+	$('#button-midi').remove();
+} else {
+	$('#button-midi').on('click', function () {
+		// use navigator.requestMIDIAccess({ sysex: true }) for system exlusive access
+		navigator.requestMIDIAccess().then(function (midiAccess) {
+			console.log('MIDI ready!', midiAccess);
 
-		/*
-		for (var entry of midiAccess.inputs) {
-			var input = entry[1];
-			console.log('Input',
-				'\n\tid: ', input.id,
-				'\n\ttype: ', input.type,
-				'\n\tame: ', input.name,
-				'\n\tmanufacturer: ', input.manufacturer,
-				'\n\tversion: ', input.version);
-		}
+			/*
+			for (var entry of midiAccess.inputs) {
+				var input = entry[1];
+				console.log('Input',
+					'\n\tid: ', input.id,
+					'\n\ttype: ', input.type,
+					'\n\tame: ', input.name,
+					'\n\tmanufacturer: ', input.manufacturer,
+					'\n\tversion: ', input.version);
+			}
 
-		for (var entry of midiAccess.outputs) {
-			var output = entry[1];
-			console.log('Output',
-				'\n\tid: ', output.id,
-				'\n\ttype: ', output.type,
-				'\n\tame: ', output.name,
-				'\n\tmanufacturer: ', output.manufacturer,
-				'\n\tversion: ', output.version);
-		}
-		*/
+			for (var entry of midiAccess.outputs) {
+				var output = entry[1];
+				console.log('Output',
+					'\n\tid: ', output.id,
+					'\n\ttype: ', output.type,
+					'\n\tame: ', output.name,
+					'\n\tmanufacturer: ', output.manufacturer,
+					'\n\tversion: ', output.version);
+			}
+			*/
 
-		midiAccess.inputs.forEach(function (input) {
-			input.onmidimessage = function (event) {
-				/*
-				var data = [];
-				for (var i = 0; i < event.data.length; ++i) {
-					data.push('0x' + event.data[i].toString(16));
-				}
-				console.log('MIDI Message',
-					'\n\ttimestamp: ', event.timestamp,
-					'\n\tbytes length: ', event.data.length,
-					'\n\tdata: ', '[' + data.join(', ') + ']');
-				*/
-				var command = event.data[0] & 0xf0, // Mask off the lower nibble (MIDI channel, which we don't care about)
-					note = event.data[1],
-					velocity = event.data[2],
-					frequency = Math.pow(2, (note - 69) / 12) * 440;
-				if (command === 0x90 && velocity !== 0) {
-					SYNTH.addVoice('midi-' + note, frequency, velocity * 100 / 127);
-				} else if (command === 0x80 || velocity === 0) {
-					SYNTH.removeVoice('midi-' + note);
-				}
-			};
+			var count = 0;
+			midiAccess.inputs.forEach(function (input) {
+				input.onmidimessage = function (event) {
+					/*
+					var data = [];
+					for (var i = 0; i < event.data.length; ++i) {
+						data.push('0x' + event.data[i].toString(16));
+					}
+					console.log('MIDI Message',
+						'\n\ttimestamp: ', event.timestamp,
+						'\n\tbytes length: ', event.data.length,
+						'\n\tdata: ', '[' + data.join(', ') + ']');
+					*/
+					var command = event.data[0] & 0xf0, // Mask off the lower nibble (MIDI channel, which we don't care about)
+						note = event.data[1],
+						velocity = event.data[2],
+						frequency = Math.pow(2, (note - 69) / 12) * 440;
+					if (command === 0x90 && velocity !== 0) {
+						SYNTH.addVoice('midi-' + note, frequency, velocity / 127);
+					} else if (command === 0x80 || velocity === 0) {
+						SYNTH.removeVoice('midi-' + note);
+					}
+				};
+			});
+
+			if (count > 0) {
+				alert('MIDI connection ready!');
+			} else {
+				alert('No MIDI input detected!');
+			}
+		}, function (message) {
+			console.log('Failed to get MIDI access', message);
+			alert('Failed to get MIDI access\n\n' + message);
 		});
-	}, function (message) {
-		console.log('Failed to get MIDI access', message);
 	});
 }
 

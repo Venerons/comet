@@ -1,6 +1,6 @@
 # Comet
 
-_Copyright (c) 2014-2015 Daniele Veneroni._  
+_Copyright (c) 2014-2016 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
 
 ## Features
@@ -18,6 +18,7 @@ _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further informat
 * Mouse
 * Touch
 * Keyboard
+* MIDI devices
 
 ### Animate!
 
@@ -26,7 +27,7 @@ _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further informat
 ## Licensing
 
 Comet  
-Copyright (c) 2014-2015 Daniele Veneroni  
+Copyright (c) 2014-2016 Daniele Veneroni  
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  
 
@@ -42,7 +43,6 @@ Created and maintained by [Daniele Veneroni](http://venerons.github.io) ([@Vener
 ## TODO Features
 
 * Controls
-	* MIDI
 	* Microphone
 * Presets
 	* Save, Export & Import
