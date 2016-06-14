@@ -193,17 +193,6 @@ var SYNTH = {
 
 		var velocityGain = SYNTH.context.createGain();
 		velocityGain.gain.value = velocity;
-		/*
-		var attack = 2, // time in seconds
-			decay = 0.5, // time in seconds
-			sustain = 0.8; // gain
-		var now = SYNTH.context.currentTime;
-		// Attack
-		velocityGain.gain.setValueAtTime(0, now);
-		velocityGain.gain.linearRampToValueAtTime(1, now + (attack / 10));
-		// Decay
-		velocityGain.gain.setTargetAtTime(velocity * sustain / 100, now, (attack + decay) / 10);
-		*/
 
 		// BIQUAD FILTER
 
@@ -267,27 +256,6 @@ var SYNTH = {
 		//console.log('removeVoice', id);
 		if (SYNTH.voices.has(id)) {
 			var sound = SYNTH.voices.get(id);
-
-			/*
-			var release = 2; // time in seconds
-			var velocity = sound.velocity;
-			var now = SYNTH.context.currentTime;
-			velocity.gain.setTargetAtTime(0, now, release / 10);
-			sound.osc1.osc.onend = function () {
-				sound.osc1.osc.disconnect();
-				sound.osc1.mix.disconnect();
-				if (sound.osc2 !== null) {
-					sound.osc2.osc.stop(0);
-					sound.osc2.osc.disconnect();
-					sound.osc2.mix.disconnect();
-				}
-				sound.velocity.disconnect();
-				sound.filter.disconnect();
-				SYNTH.voices.delete(id);
-			};
-			sound.osc1.osc.stop(now + release);
-			*/
-
 			sound.osc1.osc.stop(0);
 			sound.osc1.osc.disconnect();
 			sound.osc1.mix.disconnect();
@@ -1340,6 +1308,36 @@ touchend		-> remove sound
 */
 
 var points = new Map();
+/*
+var dumbOSCFrequency = function (mouseX, mouseMaxW) {
+	var minValue = 27.5,
+		maxValue = 2000;
+	return ((mouseX / mouseMaxW) * maxValue) + minValue;
+};
+var dumbFilterFrequency = function (mouseY, mouseMaxH) {
+	var minValue = 27.5,
+		maxValue = SYNTH.context.sampleRate / 2;
+	return ((mouseY / mouseMaxH) * maxValue) + minValue;
+};
+*/
+var smartOSCFrequency = function (mouseX, mouseMaxW) {
+	var minValue = 27.5,
+		maxValue = 2000, //4186.01,
+		range = mouseX * 1.0 / mouseMaxW,
+		numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2,
+		multiplier = Math.pow(2, numberOfOctaves * (range - 1.0)),
+		frequency = maxValue * multiplier;
+	return frequency;
+};
+var smartFilterFrequency = function (mouseY, mouseMaxH) {
+	var minValue = 27.5,
+		maxValue = SYNTH.context.sampleRate / 2,
+		range = 1.0 - (mouseY * 1.0 / mouseMaxH),
+		numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2,
+		multiplier = Math.pow(2, numberOfOctaves * (range - 1.0)),
+		filterFrequency = maxValue * multiplier;
+	return filterFrequency;
+};
 
 $('#surface')
 	.on('pointerenter pointerover', function (e) {
@@ -1351,21 +1349,8 @@ $('#surface')
 		if (e.originalEvent) {
 			e = e.originalEvent;
 		}
-		var minValue = 27.5,
-			maxValue = SYNTH.context.sampleRate / 2,
-			range = 1.0 - (e.pageY * 1.0 / paper.height),
-			numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2,
-			multiplier = Math.pow(2, numberOfOctaves * (range - 1.0)),
-			filterFrequency = maxValue * multiplier;
 
-		var minValue = 27.5,
-			maxValue = 4186.01,
-			range = e.pageX * 1.0 / paper.width,
-			numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2,
-			multiplier = Math.pow(2, numberOfOctaves * (range - 1.0)),
-			frequency = maxValue * multiplier;
-
-		SYNTH.addVoice('pointer-' + e.pointerId, frequency, e.pressure, filterFrequency);
+		SYNTH.addVoice('pointer-' + e.pointerId, smartOSCFrequency(e.pageX, paper.width), e.pressure, smartFilterFrequency(e.pageY, paper.height));
 
 		if (!points.has(e.pointerId)) {
 			var colors = [ '#D34D2E', '#FF9900', '#F3CF3A', '#44DE43', '#3DC186', '#37BBBA', '#4DC3FA', '#B158B6', '#FB6368', '#F23A65' ];
@@ -1382,21 +1367,8 @@ $('#surface')
 			e = e.originalEvent;
 		}
 		if (SYNTH.voices.has('pointer-' + e.pointerId)) {
-			var minValue = 27.5,
-				maxValue = SYNTH.context.sampleRate / 2,
-				range = 1.0 - (e.pageY * 1.0 / paper.height),
-				numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2,
-				multiplier = Math.pow(2, numberOfOctaves * (range - 1.0)),
-				filterFrequency = maxValue * multiplier;
 
-			var minValue = 27.5,
-				maxValue = 4186.01,
-				range = e.pageX * 1.0 / paper.width,
-				numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2,
-				multiplier = Math.pow(2, numberOfOctaves * (range - 1.0)),
-				frequency = maxValue * multiplier;
-
-			SYNTH.updateVoice('pointer-' + e.pointerId, frequency, null, filterFrequency);
+			SYNTH.updateVoice('pointer-' + e.pointerId, smartOSCFrequency(e.pageX, paper.width), null, smartFilterFrequency(e.pageY, paper.height));
 
 			if (points.has(e.pointerId)) {
 				var point = points.get(e.pointerId);

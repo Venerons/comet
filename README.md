@@ -52,9 +52,6 @@ Created and maintained by [Daniele Veneroni](http://venerons.github.io) ([@Vener
 	* New Type: Supersaw
 * Biquad Filter
 	* Filter Envelope (Attack, Decay, Sustain, Release)
-* Effects
-	* Distorsion
-	* Feedback Delay
 * Modules
 	* LFO
 	* Modulation - modify filter frequency using pointer pageY OR Device Orientation API
