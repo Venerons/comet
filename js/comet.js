@@ -58,7 +58,6 @@ var SYNTH = {
 			threshold: -24,
 			knee: 30,
 			ratio: 12,
-			reduction: 0,
 			attack: 0.003,
 			release: 0.25
 		},
@@ -116,18 +115,12 @@ var SYNTH = {
 		nodes.compressor.threshold.value = settings.compressor.threshold;
 		nodes.compressor.knee.value = settings.compressor.knee;
 		nodes.compressor.ratio.value = settings.compressor.ratio;
-		try {
-			nodes.compressor.reduction.value = settings.compressor.reduction;
-		} catch (e) {
-			console.warn('compressor.reduction error', e);
-		}
 		nodes.compressor.attack.value = settings.compressor.attack;
 		nodes.compressor.release.value = settings.compressor.release;
 
 		$('#compressor-threshold').val(settings.compressor.threshold).trigger('input');
 		$('#compressor-knee').val(settings.compressor.knee).trigger('input');
 		$('#compressor-ratio').val(settings.compressor.ratio).trigger('input');
-		$('#compressor-reduction').val(settings.compressor.reduction).trigger('input');
 		$('#compressor-attack').val(settings.compressor.attack).trigger('input');
 		$('#compressor-release').val(settings.compressor.release).trigger('input');
 
@@ -822,16 +815,6 @@ $('#compressor-ratio').on('input', function () {
 	var value = parseFloat($(this).val());
 	SYNTH.settings.compressor.ratio = value;
 	SYNTH.nodes.compressor.ratio.value = value;
-});
-
-$('#compressor-reduction').on('input', function () {
-	var value = parseFloat($(this).val());
-	SYNTH.settings.compressor.reduction = value;
-	try {
-		SYNTH.nodes.compressor.reduction.value = value;
-	} catch (e) {
-		console.warn('compressor.reduction error', e);
-	}
 });
 
 $('#compressor-attack').on('input', function () {
