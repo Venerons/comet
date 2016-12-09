@@ -81,6 +81,7 @@ p {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
+	overflow: auto;
 
 	&.sidebar-top {
 		top: 0;
