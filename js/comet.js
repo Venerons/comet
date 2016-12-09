@@ -526,25 +526,29 @@ https://stackoverflow.com/questions/7840347/web-audio-api-waveshapernode
 	*/
 		// USING XMLHttpRequest
 		files.forEach(function (file) {
-			var request = new XMLHttpRequest();
-			request.onload = function (e) {
-				if (request.readyState !== 4 || request.status < 200 || request.status > 299) {
-					console.error('"' + file.name + '" network response was not ok [ readyState: ' + request.readyState + ' - status: ' + request.status + ' ' + request.statusText + ' ]');
-				} else {
-					SYNTH.context.decodeAudioData(request.response).then(function (buffer) {
-						SYNTH.buffers[file.name] = buffer;
-						$select.find('option[value="' + file.name + '"]').prop('disabled', false);
-					}).catch(function (e) {
-						console.log('Error on "' + file.name + '" decodeAudioData [ERROR: ' + e.toString() + ']');
-					});
-				}
-			};
-			request.onerror = function (e) {
-				console.error('"' + file.name + '" network error', e);
-			};
-			request.open('GET', file.url, true);
-			request.responseType = 'arraybuffer';
-			request.send();
+			try {
+				var request = new XMLHttpRequest();
+				request.onload = function (e) {
+					if (request.readyState !== 4 || request.status < 200 || request.status > 299) {
+						console.error('"' + file.name + '" network response was not ok [ readyState: ' + request.readyState + ' - status: ' + request.status + ' ' + request.statusText + ' ]');
+					} else {
+						SYNTH.context.decodeAudioData(request.response).then(function (buffer) {
+							SYNTH.buffers[file.name] = buffer;
+							$select.find('option[value="' + file.name + '"]').prop('disabled', false);
+						}).catch(function (e) {
+							console.log('Error on "' + file.name + '" decodeAudioData [ERROR: ' + e.toString() + ']');
+						});
+					}
+				};
+				request.onerror = function (e) {
+					console.error('"' + file.name + '" network error', e);
+				};
+				request.open('GET', file.url, true);
+				request.responseType = 'arraybuffer';
+				request.send();
+			} catch (e) {
+				console.error('"' + file.name + '" execution error', e);
+			}
 		});
 	/*
 	}
