@@ -125,7 +125,9 @@ var SYNTH = {
 		$('#compressor-release').val(settings.compressor.release).trigger('input');
 
 		// STEREO PANNER
-		nodes.panner.pan.value = settings.master.pan;
+		if (SYNTH.context.createStereoPanner) {
+			nodes.panner.pan.value = settings.master.pan;
+		}
 
 		$('#master-pan').val(settings.master.pan).trigger('input');
 
@@ -269,14 +271,20 @@ var SYNTH = {
 SYNTH.nodes.sharedFilter = SYNTH.context.createBiquadFilter();
 SYNTH.nodes.blender = SYNTH.context.createGain();
 SYNTH.nodes.compressor = SYNTH.context.createDynamicsCompressor();
-SYNTH.nodes.panner = SYNTH.context.createStereoPanner();
+if (SYNTH.context.createStereoPanner) {
+	SYNTH.nodes.panner = SYNTH.context.createStereoPanner();
+}
 SYNTH.nodes.master = SYNTH.context.createGain();
 SYNTH.nodes.analyser = SYNTH.context.createAnalyser();
 
 SYNTH.nodes.sharedFilter.connect(SYNTH.nodes.blender);
 SYNTH.nodes.blender.connect(SYNTH.nodes.compressor);
-SYNTH.nodes.compressor.connect(SYNTH.nodes.panner);
-SYNTH.nodes.panner.connect(SYNTH.nodes.master);
+if (SYNTH.context.createStereoPanner) {
+	SYNTH.nodes.compressor.connect(SYNTH.nodes.panner);
+	SYNTH.nodes.panner.connect(SYNTH.nodes.master);
+} else {
+	SYNTH.nodes.compressor.connect(SYNTH.nodes.master);
+}
 SYNTH.nodes.master.connect(SYNTH.nodes.analyser);
 SYNTH.nodes.analyser.connect(SYNTH.context.destination);
 
@@ -833,17 +841,23 @@ $('#compressor-release').on('input', function () {
 // # MASTER CONTROLS                            #
 // ##############################################
 
-$('#master-volume').on('input', function () {
-	var value = parseFloat($(this).val());
-	SYNTH.settings.master.volume = value;
-	SYNTH.nodes.master.gain.value = value;
-});
+if (SYNTH.context.createStereoPanner) {
 
-$('#master-pan').on('input', function () {
-	var value = parseFloat($(this).val());
-	SYNTH.settings.master.pan = value;
-	SYNTH.nodes.panner.pan.value = value;
-});
+	$('#master-volume').on('input', function () {
+		var value = parseFloat($(this).val());
+		SYNTH.settings.master.volume = value;
+		SYNTH.nodes.master.gain.value = value;
+	});
+
+	$('#master-pan').on('input', function () {
+		var value = parseFloat($(this).val());
+		SYNTH.settings.master.pan = value;
+		SYNTH.nodes.panner.pan.value = value;
+	});
+
+} else {
+	$('#master-pan').parent().hide();
+}
 
 // ##############################################
 // # ANIMATION CONTROLS                         #
