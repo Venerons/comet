@@ -1,0 +1,15 @@
+{
+	"background_color": "#333333",
+	"description": "Web Synthesis on steroids",
+	"display": "fullscreen",
+	"icons": [
+		{
+			"src": "icons/android/icon192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		}
+	],
+	"name": "Comet",
+	"short_name": "Comet",
+	"start_url": "/Comet/index.html"
+}
