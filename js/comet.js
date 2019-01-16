@@ -1210,12 +1210,7 @@ localforage.getItem('presets', function (error, value) {
 			width: window.innerWidth,
 			height: window.innerHeight / 2,
 			octaves: 2,
-			startNote: startNote,
-			whiteKeyColour: '#E7ECEE',
-			blackKeyColour: '#1F2022',
-			activeColour: '#46C891',
-			borderColour: 'black',
-			keyboardLayout: 'en'
+			startNote: startNote
 		});
 
 		keyboard.keyDown = function (note, frequency) {
