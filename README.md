@@ -1,6 +1,6 @@
 # Comet
 
-_Copyright (c) 2014-2016 Daniele Veneroni._  
+_Copyright (c) 2014-2019 Daniele Veneroni._  
 _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further information._
 
 ## Features
@@ -27,7 +27,7 @@ _Released under GPLv3 License. See [LICENSE.md](LICENSE.md) for further informat
 ## Licensing
 
 Comet  
-Copyright (c) 2014-2016 Daniele Veneroni  
+Copyright (c) 2014-2019 Daniele Veneroni  
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  
 
