@@ -1,0 +1,650 @@
+{
+	"1": {
+		"key_number": 1,
+		"helmholtz_name": "A͵͵",
+		"scientific_name": "A0",
+		"frequency": 27.50000
+	},
+	"2": {
+		"key_number": 2,
+		"helmholtz_name": "A♯͵͵/B♭͵͵",
+		"scientific_name": "A♯0/B♭0",
+		"frequency": 29.13524
+	},
+	"3": {
+		"key_number": 3,
+		"helmholtz_name": "B͵͵",
+		"scientific_name": "B0",
+		"frequency": 30.86771
+	},
+	"4": {
+		"key_number": 4,
+		"helmholtz_name": "C͵ contra-octave",
+		"scientific_name": "C1 Pedal C",
+		"frequency": 32.70320
+	},
+	"5": {
+		"key_number": 5,
+		"helmholtz_name": "C♯͵/D♭͵",
+		"scientific_name": "C♯1/D♭1",
+		"frequency": 34.64783
+	},
+	"6": {
+		"key_number": 6,
+		"helmholtz_name": "D͵",
+		"scientific_name": "D1",
+		"frequency": 36.70810
+	},
+	"7": {
+		"key_number": 7,
+		"helmholtz_name": "D♯͵/E♭͵",
+		"scientific_name": "D♯1/E♭1",
+		"frequency": 38.89087
+	},
+	"8": {
+		"key_number": 8,
+		"helmholtz_name": "E͵",
+		"scientific_name": "E1",
+		"frequency": 41.20344
+	},
+	"9": {
+		"key_number": 9,
+		"helmholtz_name": "F͵",
+		"scientific_name": "F1",
+		"frequency": 43.65353
+	},
+	"10": {
+		"key_number": 10,
+		"helmholtz_name": "F♯͵/G♭͵",
+		"scientific_name": "F♯1/G♭1",
+		"frequency": 46.24930
+	},
+	"11": {
+		"key_number": 11,
+		"helmholtz_name": "G͵",
+		"scientific_name": "G1",
+		"frequency": 48.99943
+	},
+	"12": {
+		"key_number": 12,
+		"helmholtz_name": "G♯͵/A♭͵",
+		"scientific_name": "G♯1/A♭1",
+		"frequency": 51.91309
+	},
+	"13": {
+		"key_number": 13,
+		"helmholtz_name": "A͵",
+		"scientific_name": "A1",
+		"frequency": 55.00000
+	},
+	"14": {
+		"key_number": 14,
+		"helmholtz_name": "A♯͵/B♭͵",
+		"scientific_name": "A♯1/B♭1",
+		"frequency": 58.27047
+	},
+	"15": {
+		"key_number": 15,
+		"helmholtz_name": "B͵",
+		"scientific_name": "B1",
+		"frequency": 61.73541
+	},
+	"16": {
+		"key_number": 16,
+		"helmholtz_name": "C great octave",
+		"scientific_name": "C2 Deep C",
+		"frequency": 65.40639
+	},
+	"17": {
+		"key_number": 17,
+		"helmholtz_name": "C♯/D♭",
+		"scientific_name": "C♯2/D♭2",
+		"frequency": 69.29566
+	},
+	"18": {
+		"key_number": 18,
+		"helmholtz_name": "D",
+		"scientific_name": "D2",
+		"frequency": 73.41619
+	},
+	"19": {
+		"key_number": 19,
+		"helmholtz_name": "D♯/E♭",
+		"scientific_name": "D♯2/E♭2",
+		"frequency": 77.78175
+	},
+	"20": {
+		"key_number": 20,
+		"helmholtz_name": "E",
+		"scientific_name": "E2",
+		"frequency": 82.40689
+	},
+	"21": {
+		"key_number": 21,
+		"helmholtz_name": "F",
+		"scientific_name": "F2",
+		"frequency": 87.30706
+	},
+	"22": {
+		"key_number": 22,
+		"helmholtz_name": "F♯/G♭",
+		"scientific_name": "F♯2/G♭2",
+		"frequency": 92.49861
+	},
+	"23": {
+		"key_number": 23,
+		"helmholtz_name": "G",
+		"scientific_name": "G2",
+		"frequency": 97.99886
+	},
+	"24": {
+		"key_number": 24,
+		"helmholtz_name": "G♯/A♭",
+		"scientific_name": "G♯2/A♭2",
+		"frequency": 103.8262
+	},
+	"25": {
+		"key_number": 25,
+		"helmholtz_name": "A",
+		"scientific_name": "A2",
+		"frequency": 110.0000
+	},
+	"26": {
+		"key_number": 26,
+		"helmholtz_name": "A♯/B♭",
+		"scientific_name": "A♯2/B♭2",
+		"frequency": 116.5409
+	},
+	"27": {
+		"key_number": 27,
+		"helmholtz_name": "B",
+		"scientific_name": "B2",
+		"frequency": 123.4708
+	},
+	"28": {
+		"key_number": 28,
+		"helmholtz_name": "c small octave",
+		"scientific_name": "C3",
+		"frequency": 130.8128
+	},
+	"29": {
+		"key_number": 29,
+		"helmholtz_name": "c♯/d♭",
+		"scientific_name": "C♯3/D♭3",
+		"frequency": 138.5913
+	},
+	"30": {
+		"key_number": 30,
+		"helmholtz_name": "d",
+		"scientific_name": "D3",
+		"frequency": 146.8324
+	},
+	"31": {
+		"key_number": 31,
+		"helmholtz_name": "d♯/e♭",
+		"scientific_name": "D♯3/E♭3",
+		"frequency": 155.5635
+	},
+	"32": {
+		"key_number": 32,
+		"helmholtz_name": "e",
+		"scientific_name": "E3",
+		"frequency": 164.8138
+	},
+	"33": {
+		"key_number": 33,
+		"helmholtz_name": "f",
+		"scientific_name": "F3",
+		"frequency": 174.6141
+	},
+	"34": {
+		"key_number": 34,
+		"helmholtz_name": "f♯/g♭",
+		"scientific_name": "F♯3/G♭3",
+		"frequency": 184.9972
+	},
+	"35": {
+		"key_number": 35,
+		"helmholtz_name": "g",
+		"scientific_name": "G3",
+		"frequency": 195.9977
+	},
+	"36": {
+		"key_number": 36,
+		"helmholtz_name": "g♯/a♭",
+		"scientific_name": "G♯3/A♭3",
+		"frequency": 207.6523
+	},
+	"37": {
+		"key_number": 37,
+		"helmholtz_name": "a",
+		"scientific_name": "A3",
+		"frequency": 220.0000
+	},
+	"38": {
+		"key_number": 38,
+		"helmholtz_name": "a♯/b♭",
+		"scientific_name": "A♯3/B♭3",
+		"frequency": 233.0819
+	},
+	"39": {
+		"key_number": 39,
+		"helmholtz_name": "b",
+		"scientific_name": "B3",
+		"frequency": 246.9417
+	},
+	"40": {
+		"key_number": 40,
+		"helmholtz_name": "c′ 1-line octave",
+		"scientific_name": "C4 Middle C",
+		"frequency": 261.6256
+	},
+	"41": {
+		"key_number": 41,
+		"helmholtz_name": "c♯′/d♭′",
+		"scientific_name": "C♯4/D♭4",
+		"frequency": 277.1826
+	},
+	"42": {
+		"key_number": 42,
+		"helmholtz_name": "d′",
+		"scientific_name": "D4",
+		"frequency": 293.6648
+	},
+	"43": {
+		"key_number": 43,
+		"helmholtz_name": "d♯′/e♭′",
+		"scientific_name": "D♯4/E♭4",
+		"frequency": 311.1270
+	},
+	"44": {
+		"key_number": 44,
+		"helmholtz_name": "e′",
+		"scientific_name": "E4",
+		"frequency": 329.6276
+	},
+	"45": {
+		"key_number": 45,
+		"helmholtz_name": "f′",
+		"scientific_name": "F4",
+		"frequency": 349.2282
+	},
+	"46": {
+		"key_number": 46,
+		"helmholtz_name": "f♯′/g♭′",
+		"scientific_name": "F♯4/G♭4",
+		"frequency": 369.9944
+	},
+	"47": {
+		"key_number": 47,
+		"helmholtz_name": "g′",
+		"scientific_name": "G4",
+		"frequency": 391.9954
+	},
+	"48": {
+		"key_number": 48,
+		"helmholtz_name": "g♯′/a♭′",
+		"scientific_name": "G♯4/A♭4",
+		"frequency": 415.3047
+	},
+	"49": {
+		"key_number": 49,
+		"helmholtz_name": "a′",
+		"scientific_name": "A4 A440",
+		"frequency": 440.0000
+	},
+	"50": {
+		"key_number": 50,
+		"helmholtz_name": "a♯′/b♭′",
+		"scientific_name": "A♯4/B♭4",
+		"frequency": 466.1638
+	},
+	"51": {
+		"key_number": 51,
+		"helmholtz_name": "b′",
+		"scientific_name": "B4",
+		"frequency": 493.8833
+	},
+	"52": {
+		"key_number": 52,
+		"helmholtz_name": "c′′ 2-line octave",
+		"scientific_name": "C5 Tenor C",
+		"frequency": 523.2511
+	},
+	"53": {
+		"key_number": 53,
+		"helmholtz_name": "c♯′′/d♭′′",
+		"scientific_name": "C♯5/D♭5",
+		"frequency": 554.3653
+	},
+	"54": {
+		"key_number": 54,
+		"helmholtz_name": "d′′",
+		"scientific_name": "D5",
+		"frequency": 587.3295
+	},
+	"55": {
+		"key_number": 55,
+		"helmholtz_name": "d♯′′/e♭′′",
+		"scientific_name": "D♯5/E♭5",
+		"frequency": 622.2540
+	},
+	"56": {
+		"key_number": 56,
+		"helmholtz_name": "e′′",
+		"scientific_name": "E5",
+		"frequency": 659.2551
+	},
+	"57": {
+		"key_number": 57,
+		"helmholtz_name": "f′′",
+		"scientific_name": "F5",
+		"frequency": 698.4565
+	},
+	"58": {
+		"key_number": 58,
+		"helmholtz_name": "f♯′′/g♭′′",
+		"scientific_name": "F♯5/G♭5",
+		"frequency": 739.9888
+	},
+	"59": {
+		"key_number": 59,
+		"helmholtz_name": "g′′",
+		"scientific_name": "G5",
+		"frequency": 783.9909
+	},
+	"60": {
+		"key_number": 60,
+		"helmholtz_name": "g♯′′/a♭′′",
+		"scientific_name": "G♯5/A♭5",
+		"frequency": 830.6094
+	},
+	"61": {
+		"key_number": 61,
+		"helmholtz_name": "a′′",
+		"scientific_name": "A5",
+		"frequency": 880.0000
+	},
+	"62": {
+		"key_number": 62,
+		"helmholtz_name": "a♯′′/b♭′′",
+		"scientific_name": "A♯5/B♭5",
+		"frequency": 932.3275
+	},
+	"63": {
+		"key_number": 63,
+		"helmholtz_name": "b′′",
+		"scientific_name": "B5",
+		"frequency": 987.7666
+	},
+	"64": {
+		"key_number": 64,
+		"helmholtz_name": "c′′′ 3-line octave",
+		"scientific_name": "C6 Soprano C (High C)",
+		"frequency": 1046.502
+	},
+	"65": {
+		"key_number": 65,
+		"helmholtz_name": "c♯′′′/d♭′′′",
+		"scientific_name": "C♯6/D♭6",
+		"frequency": 1108.731
+	},
+	"66": {
+		"key_number": 66,
+		"helmholtz_name": "d′′′",
+		"scientific_name": "D6",
+		"frequency": 1174.659
+	},
+	"67": {
+		"key_number": 67,
+		"helmholtz_name": "d♯′′′/e♭′′′",
+		"scientific_name": "D♯6/E♭6",
+		"frequency": 1244.508
+	},
+	"68": {
+		"key_number": 68,
+		"helmholtz_name": "e′′′",
+		"scientific_name": "E6",
+		"frequency": 1318.510
+	},
+	"69": {
+		"key_number": 69,
+		"helmholtz_name": "f′′′",
+		"scientific_name": "F6",
+		"frequency": 1396.913
+	},
+	"70": {
+		"key_number": 70,
+		"helmholtz_name": "f♯′′′/g♭′′′",
+		"scientific_name": "F♯6/G♭6",
+		"frequency": 1479.978
+	},
+	"71": {
+		"key_number": 71,
+		"helmholtz_name": "g′′′",
+		"scientific_name": "G6",
+		"frequency": 1567.982
+	},
+	"72": {
+		"key_number": 72,
+		"helmholtz_name": "g♯′′′/a♭′′′",
+		"scientific_name": "G♯6/A♭6",
+		"frequency": 1661.219
+	},
+	"73": {
+		"key_number": 73,
+		"helmholtz_name": "a′′′",
+		"scientific_name": "A6",
+		"frequency": 1760.000
+	},
+	"74": {
+		"key_number": 74,
+		"helmholtz_name": "a♯′′′/b♭′′′",
+		"scientific_name": "A♯6/B♭6",
+		"frequency": 1864.655
+	},
+	"75": {
+		"key_number": 75,
+		"helmholtz_name": "b′′′",
+		"scientific_name": "B6",
+		"frequency": 1975.533
+	},
+	"76": {
+		"key_number": 76,
+		"helmholtz_name": "c′′′′ 4-line octave",
+		"scientific_name": "C7 Double high C",
+		"frequency": 2093.005
+	},
+	"77": {
+		"key_number": 77,
+		"helmholtz_name": "c♯′′′′/d♭′′′′",
+		"scientific_name": "C♯7/D♭7",
+		"frequency": 2217.461
+	},
+	"78": {
+		"key_number": 78,
+		"helmholtz_name": "d′′′′",
+		"scientific_name": "D7",
+		"frequency": 2349.318
+	},
+	"79": {
+		"key_number": 79,
+		"helmholtz_name": "d♯′′′′/e♭′′′′",
+		"scientific_name": "D♯7/E♭7",
+		"frequency": 2489.016
+	},
+	"80": {
+		"key_number": 80,
+		"helmholtz_name": "e′′′′",
+		"scientific_name": "E7",
+		"frequency": 2637.020
+	},
+	"81": {
+		"key_number": 81,
+		"helmholtz_name": "f′′′′",
+		"scientific_name": "F7",
+		"frequency": 2793.826
+	},
+	"82": {
+		"key_number": 82,
+		"helmholtz_name": "f♯′′′′/g♭′′′′",
+		"scientific_name": "F♯7/G♭7",
+		"frequency": 2959.955
+	},
+	"83": {
+		"key_number": 83,
+		"helmholtz_name": "g′′′′",
+		"scientific_name": "G7",
+		"frequency": 3135.963
+	},
+	"84": {
+		"key_number": 84,
+		"helmholtz_name": "g♯′′′′/a♭′′′′",
+		"scientific_name": "G♯7/A♭7",
+		"frequency": 3322.438
+	},
+	"85": {
+		"key_number": 85,
+		"helmholtz_name": "a′′′′",
+		"scientific_name": "A7",
+		"frequency": 3520.000
+	},
+	"86": {
+		"key_number": 86,
+		"helmholtz_name": "a♯′′′′/b♭′′′′",
+		"scientific_name": "A♯7/B♭7",
+		"frequency": 3729.310
+	},
+	"87": {
+		"key_number": 87,
+		"helmholtz_name": "b′′′′",
+		"scientific_name": "B7",
+		"frequency": 3951.066
+	},
+	"88": {
+		"key_number": 88,
+		"helmholtz_name": "c′′′′′ 5-line octave",
+		"scientific_name": "C8 Eighth octave",
+		"frequency": 4186.009
+	},
+	"89": {
+		"key_number": 89,
+		"helmholtz_name": "C͵͵ sub-contra-octave",
+		"scientific_name": "C0 Double Pedal C",
+		"frequency": 16.35160
+	},
+	"90": {
+		"key_number": 90,
+		"helmholtz_name": "C♯͵͵/D♭͵͵",
+		"scientific_name": "C♯0/D♭0",
+		"frequency": 17.32391
+	},
+	"91": {
+		"key_number": 91,
+		"helmholtz_name": "D͵͵",
+		"scientific_name": "D0",
+		"frequency": 18.35405
+	},
+	"92": {
+		"key_number": 92,
+		"helmholtz_name": "D♯͵͵/E♭͵͵",
+		"scientific_name": "D♯0/E♭0",
+		"frequency": 19.44544
+	},
+	"93": {
+		"key_number": 93,
+		"helmholtz_name": "E͵͵",
+		"scientific_name": "E0",
+		"frequency": 20.60172
+	},
+	"94": {
+		"key_number": 94,
+		"helmholtz_name": "F͵͵",
+		"scientific_name": "F0",
+		"frequency": 21.82676
+	},
+	"95": {
+		"key_number": 95,
+		"helmholtz_name": "F♯͵͵/G♭͵͵",
+		"scientific_name": "F♯0/G♭0",
+		"frequency": 23.12465
+	},
+	"96": {
+		"key_number": 96,
+		"helmholtz_name": "G͵͵",
+		"scientific_name": "G0",
+		"frequency": 24.49971
+	},
+	"97": {
+		"key_number": 97,
+		"helmholtz_name": "G♯͵͵/A♭͵͵",
+		"scientific_name": "G♯0/A♭0",
+		"frequency": 25.95654
+	},
+	"98": {
+		"key_number": 98,
+		"helmholtz_name": "c♯′′′′′/d♭′′′′′",
+		"scientific_name": "C♯8/D♭8",
+		"frequency": 4434.922
+	},
+	"99": {
+		"key_number": 99,
+		"helmholtz_name": "d′′′′′",
+		"scientific_name": "D8",
+		"frequency": 4698.636
+	},
+	"100": {
+		"key_number": 100,
+		"helmholtz_name": "d♯′′′′′/e♭′′′′′",
+		"scientific_name": "D♯8/E♭8",
+		"frequency": 4978.032
+	},
+	"101": {
+		"key_number": 101,
+		"helmholtz_name": "e′′′′′",
+		"scientific_name": "E8",
+		"frequency": 5274.041
+	},
+	"102": {
+		"key_number": 102,
+		"helmholtz_name": "f′′′′′",
+		"scientific_name": "F8",
+		"frequency": 5587.652
+	},
+	"103": {
+		"key_number": 103,
+		"helmholtz_name": "f♯′′′′′/g♭′′′′′",
+		"scientific_name": "F♯8/G♭8",
+		"frequency": 5919.911
+	},
+	"104": {
+		"key_number": 104,
+		"helmholtz_name": "g′′′′′",
+		"scientific_name": "G8",
+		"frequency": 6271.927
+	},
+	"105": {
+		"key_number": 105,
+		"helmholtz_name": "g♯′′′′′/a♭′′′′′",
+		"scientific_name": "G♯8/A♭8",
+		"frequency": 6644.875
+	},
+	"106": {
+		"key_number": 106,
+		"helmholtz_name": "a′′′′′",
+		"scientific_name": "A8",
+		"frequency": 7040.000
+	},
+	"107": {
+		"key_number": 107,
+		"helmholtz_name": "a♯′′′′′/b♭′′′′′",
+		"scientific_name": "A♯8/B♭8",
+		"frequency": 7458.620
+	},
+	"108": {
+		"key_number": 108,
+		"helmholtz_name": "b′′′′′",
+		"scientific_name": "B8",
+		"frequency": 7902.133
+	}
+}
