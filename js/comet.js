@@ -1195,62 +1195,509 @@ localforage.getItem('presets', function (error, value) {
 // ##############################################
 
 (function () {
-	function connectKeyboard(startNote) {
-		var keyboardElement = document.getElementById('keyboard');
-		if (keyboardElement) {
-			keyboardElement.remove();
-		}
-		keyboardElement = document.createElement('div');
-		keyboardElement.hidden = true;
-		keyboardElement.setAttribute('id', 'keyboard');
-		document.body.appendChild(keyboardElement);
-
-		var keyboard = new QwertyHancock({
-			id: 'keyboard',
-			width: window.innerWidth,
-			height: window.innerHeight / 2,
-			octaves: 2,
-			startNote: startNote
-		});
-
-		keyboard.keyDown = function (note, frequency) {
-			SYNTH.addVoice('keyboard-' + note, frequency, 0.5);
+	var piano_keyboard = function (onkeydown, onkeyup) {
+		var keycode_map = {
+			'65': 40,
+			'87': 41,
+			'83': 42,
+			'69': 43,
+			'68': 44,
+			'70': 45,
+			'84': 46,
+			'71': 47,
+			'89': 48,
+			'72': 49,
+			'85': 50,
+			'74': 51,
+			'75': 52,
+			'79': 53,
+			'76': 54,
+			'80': 55
 		};
-
-		keyboard.keyUp = function (note, frequency) {
-			SYNTH.removeVoice('keyboard-' + note);
+		var piano_keys = {
+			'1': {
+				key_number: 1,
+				frequency: 27.50000
+			},
+			'2': {
+				key_number: 2,
+				frequency: 29.13524
+			},
+			'3': {
+				key_number: 3,
+				frequency: 30.86771
+			},
+			'4': {
+				key_number: 4,
+				frequency: 32.70320
+			},
+			'5': {
+				key_number: 5,
+				frequency: 34.64783
+			},
+			'6': {
+				key_number: 6,
+				frequency: 36.70810
+			},
+			'7': {
+				key_number: 7,
+				frequency: 38.89087
+			},
+			'8': {
+				key_number: 8,
+				frequency: 41.20344
+			},
+			'9': {
+				key_number: 9,
+				frequency: 43.65353
+			},
+			'10': {
+				key_number: 10,
+				frequency: 46.24930
+			},
+			'11': {
+				key_number: 11,
+				frequency: 48.99943
+			},
+			'12': {
+				key_number: 12,
+				frequency: 51.91309
+			},
+			'13': {
+				key_number: 13,
+				frequency: 55.00000
+			},
+			'14': {
+				key_number: 14,
+				frequency: 58.27047
+			},
+			'15': {
+				key_number: 15,
+				frequency: 61.73541
+			},
+			'16': {
+				key_number: 16,
+				frequency: 65.40639
+			},
+			'17': {
+				key_number: 17,
+				frequency: 69.29566
+			},
+			'18': {
+				key_number: 18,
+				frequency: 73.41619
+			},
+			'19': {
+				key_number: 19,
+				frequency: 77.78175
+			},
+			'20': {
+				key_number: 20,
+				frequency: 82.40689
+			},
+			'21': {
+				key_number: 21,
+				frequency: 87.30706
+			},
+			'22': {
+				key_number: 22,
+				frequency: 92.49861
+			},
+			'23': {
+				key_number: 23,
+				frequency: 97.99886
+			},
+			'24': {
+				key_number: 24,
+				frequency: 103.8262
+			},
+			'25': {
+				key_number: 25,
+				frequency: 110.0000
+			},
+			'26': {
+				key_number: 26,
+				frequency: 116.5409
+			},
+			'27': {
+				key_number: 27,
+				frequency: 123.4708
+			},
+			'28': {
+				key_number: 28,
+				frequency: 130.8128
+			},
+			'29': {
+				key_number: 29,
+				frequency: 138.5913
+			},
+			'30': {
+				key_number: 30,
+				frequency: 146.8324
+			},
+			'31': {
+				key_number: 31,
+				frequency: 155.5635
+			},
+			'32': {
+				key_number: 32,
+				frequency: 164.8138
+			},
+			'33': {
+				key_number: 33,
+				frequency: 174.6141
+			},
+			'34': {
+				key_number: 34,
+				frequency: 184.9972
+			},
+			'35': {
+				key_number: 35,
+				frequency: 195.9977
+			},
+			'36': {
+				key_number: 36,
+				frequency: 207.6523
+			},
+			'37': {
+				key_number: 37,
+				frequency: 220.0000
+			},
+			'38': {
+				key_number: 38,
+				frequency: 233.0819
+			},
+			'39': {
+				key_number: 39,
+				frequency: 246.9417
+			},
+			'40': {
+				key_number: 40,
+				frequency: 261.6256
+			},
+			'41': {
+				key_number: 41,
+				frequency: 277.1826
+			},
+			'42': {
+				key_number: 42,
+				frequency: 293.6648
+			},
+			'43': {
+				key_number: 43,
+				frequency: 311.1270
+			},
+			'44': {
+				key_number: 44,
+				frequency: 329.6276
+			},
+			'45': {
+				key_number: 45,
+				frequency: 349.2282
+			},
+			'46': {
+				key_number: 46,
+				frequency: 369.9944
+			},
+			'47': {
+				key_number: 47,
+				frequency: 391.9954
+			},
+			'48': {
+				key_number: 48,
+				frequency: 415.3047
+			},
+			'49': {
+				key_number: 49,
+				frequency: 440.0000
+			},
+			'50': {
+				key_number: 50,
+				frequency: 466.1638
+			},
+			'51': {
+				key_number: 51,
+				frequency: 493.8833
+			},
+			'52': {
+				key_number: 52,
+				frequency: 523.2511
+			},
+			'53': {
+				key_number: 53,
+				frequency: 554.3653
+			},
+			'54': {
+				key_number: 54,
+				frequency: 587.3295
+			},
+			'55': {
+				key_number: 55,
+				frequency: 622.2540
+			},
+			'56': {
+				key_number: 56,
+				frequency: 659.2551
+			},
+			'57': {
+				key_number: 57,
+				frequency: 698.4565
+			},
+			'58': {
+				key_number: 58,
+				frequency: 739.9888
+			},
+			'59': {
+				key_number: 59,
+				frequency: 783.9909
+			},
+			'60': {
+				key_number: 60,
+				frequency: 830.6094
+			},
+			'61': {
+				key_number: 61,
+				frequency: 880.0000
+			},
+			'62': {
+				key_number: 62,
+				frequency: 932.3275
+			},
+			'63': {
+				key_number: 63,
+				frequency: 987.7666
+			},
+			'64': {
+				key_number: 64,
+				frequency: 1046.502
+			},
+			'65': {
+				key_number: 65,
+				frequency: 1108.731
+			},
+			'66': {
+				key_number: 66,
+				frequency: 1174.659
+			},
+			'67': {
+				key_number: 67,
+				frequency: 1244.508
+			},
+			'68': {
+				key_number: 68,
+				frequency: 1318.510
+			},
+			'69': {
+				key_number: 69,
+				frequency: 1396.913
+			},
+			'70': {
+				key_number: 70,
+				frequency: 1479.978
+			},
+			'71': {
+				key_number: 71,
+				frequency: 1567.982
+			},
+			'72': {
+				key_number: 72,
+				frequency: 1661.219
+			},
+			'73': {
+				key_number: 73,
+				frequency: 1760.000
+			},
+			'74': {
+				key_number: 74,
+				frequency: 1864.655
+			},
+			'75': {
+				key_number: 75,
+				frequency: 1975.533
+			},
+			'76': {
+				key_number: 76,
+				frequency: 2093.005
+			},
+			'77': {
+				key_number: 77,
+				frequency: 2217.461
+			},
+			'78': {
+				key_number: 78,
+				frequency: 2349.318
+			},
+			'79': {
+				key_number: 79,
+				frequency: 2489.016
+			},
+			'80': {
+				key_number: 80,
+				frequency: 2637.020
+			},
+			'81': {
+				key_number: 81,
+				frequency: 2793.826
+			},
+			'82': {
+				key_number: 82,
+				frequency: 2959.955
+			},
+			'83': {
+				key_number: 83,
+				frequency: 3135.963
+			},
+			'84': {
+				key_number: 84,
+				frequency: 3322.438
+			},
+			'85': {
+				key_number: 85,
+				frequency: 3520.000
+			},
+			'86': {
+				key_number: 86,
+				frequency: 3729.310
+			},
+			'87': {
+				key_number: 87,
+				frequency: 3951.066
+			},
+			'88': {
+				key_number: 88,
+				frequency: 4186.009
+			},
+			'89': {
+				key_number: 89,
+				frequency: 16.35160
+			},
+			'90': {
+				key_number: 90,
+				frequency: 17.32391
+			},
+			'91': {
+				key_number: 91,
+				frequency: 18.35405
+			},
+			'92': {
+				key_number: 92,
+				frequency: 19.44544
+			},
+			'93': {
+				key_number: 93,
+				frequency: 20.60172
+			},
+			'94': {
+				key_number: 94,
+				frequency: 21.82676
+			},
+			'95': {
+				key_number: 95,
+				frequency: 23.12465
+			},
+			'96': {
+				key_number: 96,
+				frequency: 24.49971
+			},
+			'97': {
+				key_number: 97,
+				frequency: 25.95654
+			},
+			'98': {
+				key_number: 98,
+				frequency: 4434.922
+			},
+			'99': {
+				key_number: 99,
+				frequency: 4698.636
+			},
+			'100': {
+				key_number: 100,
+				frequency: 4978.032
+			},
+			'101': {
+				key_number: 101,
+				frequency: 5274.041
+			},
+			'102': {
+				key_number: 102,
+				frequency: 5587.652
+			},
+			'103': {
+				key_number: 103,
+				frequency: 5919.911
+			},
+			'104': {
+				key_number: 104,
+				frequency: 6271.927
+			},
+			'105': {
+				key_number: 105,
+				frequency: 6644.875
+			},
+			'106': {
+				key_number: 106,
+				frequency: 7040.000
+			},
+			'107': {
+				key_number: 107,
+				frequency: 7458.620
+			},
+			'108': {
+				key_number: 108,
+				frequency: 7902.133
+			}
 		};
+		var pressed_keys = [];
+		document.addEventListener('keydown', function (event) {
+			var keycode = event.keyCode,
+				already_pressed = false;
+			for (var i = 0; i < pressed_keys.length; ++i) {
+				if (keycode === pressed_keys[i]) {
+					already_pressed = true;
+					break;
+				}
+			}
+			if (!already_pressed) {
+				var key_number = keycode_map[keycode.toString()];
+				if (key_number) {
+					var note = piano_keys[key_number.toString()];
+					if (note) {
+						pressed_keys.push(keycode);
+						if (onkeydown) {
+							onkeydown(note.key_number, note.frequency);
+						}
+					}
+				}
+			}
+		}, false);
+		document.addEventListener('keyup', function (event) {
+			var keycode = event.keyCode,
+				garbage = [];
+			for (var i = 0; i < pressed_keys.length; ++i) {
+				if (keycode === pressed_keys[i]) {
+					pressed_keys.splice(i, 1);
+					i--;
+					var key_number = keycode_map[keycode.toString()];
+					if (key_number) {
+						var note = piano_keys[key_number.toString()];
+						if (note) {
+							if (onkeyup) {
+								onkeyup(note.key_number, note.frequency);
+							}
+						}
+					}
+				}
+			}
+		}, false);
+	};
 
-		return keyboard;
-	}
-
-	connectKeyboard('C4');
+	piano_keyboard(function (key_number, frequency) {
+		SYNTH.addVoice('keyboard-' + key_number, frequency, 0.5);
+	}, function (key_number, frequency) {
+		SYNTH.removeVoice('keyboard-' + key_number);
+	});
 })();
-
-/*
-
-// Z	-> Octave Down
-// X	-> Octave Up
-
-var keyboardFirstNote = 4;
-$(window).on('keydown', function (event) {
-	if (event.keyCode === 90) {
-		// PRESSED Z
-		keyboardFirstNote--;
-		if (keyboardFirstNote < 0) {
-			keyboardFirstNote = 0;
-		}
-		connectKeyboard('C' + keyboardFirstNote);
-	} else if (event.keyCode === 88) {
-		// PRESSED X
-		keyboardFirstNote++;
-		if (keyboardFirstNote > 9) {
-			keyboardFirstNote = 9;
-		}
-		connectKeyboard('C' + keyboardFirstNote);
-	}
-});
-*/
 
 // ##############################################
 // # POINTER                                    #
