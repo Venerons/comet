@@ -70,6 +70,9 @@ class CometSynth {
 	config(settings) {
 		const t = this;
 		Object.entries(settings).forEach(function ([category_key, category_settings]) {
+			if (!t.settings[category_key]) {
+				t.settings[category_key] = {};
+			}
 			Object.entries(category_settings).forEach(function ([setting_key, value]) {
 				t.settings[category_key][setting_key] = value;
 			});
