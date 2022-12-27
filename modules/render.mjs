@@ -11,14 +11,13 @@ class CometRender {
 	start() {
 		const t = this;
 		t.running = true;
-		t.frame_request = requestAnimationFrame(t.render);
+		t.frame_request = requestAnimationFrame(function (timestamp) { t.render(timestamp); });
 	}
 
 	stop() {
-		const t = this;
-		t.running = false;
-		cancelAnimationFrame(t.frame_request);
-		delete t.frame_request;
+		this.running = false;
+		cancelAnimationFrame(this.frame_request);
+		delete this.frame_request;
 	}
 
 	resize(w, h) {
@@ -26,6 +25,7 @@ class CometRender {
 	}
 
 	render(timestamp) {
+		const t = this;
 		if (!t.running) {
 			return;
 		}
@@ -129,7 +129,7 @@ class CometRender {
 			*/
 		}
 		if (t.running) {
-			t.frame_request = requestAnimationFrame(t.render);
+			t.frame_request = requestAnimationFrame(function (timestamp) { t.render(timestamp); });
 		}
 	}
 }

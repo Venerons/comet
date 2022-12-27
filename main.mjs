@@ -6,13 +6,18 @@ const Synth = new CometSynth();
 
 const Controller = new CometController({
 	pointer: document.querySelector('#surface'),
+	keyboard: true,
+	midi: true,
 	on_control_start: function (control_id, osc_frequency, osc_velocity, filter_frequency) {
+		//console.log('on_control_start', control_id, osc_frequency, osc_velocity, filter_frequency);
 		Synth.add_voice(control_id, osc_frequency, osc_velocity, filter_frequency);
 	},
 	on_control_update: function (control_id, osc_frequency, osc_velocity, filter_frequency) {
+		//console.log('on_control_update', control_id, osc_frequency, osc_velocity, filter_frequency);
 		Synth.update_voice(control_id, osc_frequency, osc_velocity, filter_frequency);
 	},
 	on_control_stop: function (control_id) {
+		//console.log('on_control_stop', control_id);
 		Synth.remove_voice(control_id);
 	}
 });
@@ -23,6 +28,18 @@ window.addEventListener('resize', function () {
 	Render.resize(window.innerWidth, window.innerHeight);
 });
 Render.start();
+
+$('#splash-screen').delay(2000).fadeOut();
+$('#module-info').delay(8000).fadeOut();
+$('.sidebar button').on('click', function () {
+	var $module = $('#module-' + $(this).data('module'));
+	if ($module.is(':visible')) {
+		$module.hide();
+	} else {
+		$('.module').hide();
+		$module.show();
+	}
+});
 
 // OSC
 
@@ -43,7 +60,7 @@ $('#osc1-mix').on('input', function () {
 
 $('#osc2-type').on('change', function () {
 	const value = $(this).val();
-	Synth.config({ osc2: { mix: value } });
+	Synth.config({ osc2: { type: value } });
 });
 
 $('#osc2-detune').on('input', function () {
