@@ -30,13 +30,13 @@ class CometRender {
 			return;
 		}
 		t.paper.clear();
-		const maxSpectrumHeight = t.paper.height / 4 * 3;
-		let array = new Uint8Array(t.node.frequencyBinCount);
-		t.node.getByteFrequencyData(array);
 		if (t.type === 'spectrum-linear') {
+			const array = new Uint8Array(t.node.frequencyBinCount);
+			t.node.getByteFrequencyData(array);
 			const gap = t.paper.width / (array.length * 2);
+			const max_height = t.paper.height / 4 * 3;
 			for (let i = 0; i < array.length; ++i) {
-				const newy = t.paper.height - (maxSpectrumHeight * array[i] / 256);
+				const newy = t.paper.height - (max_height * array[i] / 256);
 				t.paper.rect({
 					x: i * (gap * 2),
 					y: newy,
@@ -46,12 +46,14 @@ class CometRender {
 				});
 			}
 		} else if (t.type === 'spectrum-round') {
+			const array = new Uint8Array(t.node.frequencyBinCount);
+			t.node.getByteFrequencyData(array);
 			const degIncrement = 360 / array.length;
 			const centerX = t.paper.width / 2;
 			const centerY = t.paper.height / 2;
 			const circleR = 80;
 			const maxLength = circleR * 3;
-			for (var i = 0; i < array.length; ++i) {
+			for (let i = 0; i < array.length; ++i) {
 				const angle = ((i * degIncrement) * Math.PI) / 180;
 				const preX = Math.cos(angle);
 				const preY = Math.sin(angle);
@@ -67,12 +69,14 @@ class CometRender {
 				});
 			}
 		} else if (t.type === 'spectrum-roundinset') {
+			const array = new Uint8Array(t.node.frequencyBinCount);
+			t.node.getByteFrequencyData(array);
 			const degIncrement = 360 / array.length;
 			const centerX = t.paper.width / 2;
 			const centerY = t.paper.height / 2;
 			const circleR = 240;
 			const maxLength = circleR;
-			for (var i = 0; i < array.length; ++i) {
+			for (let i = 0; i < array.length; ++i) {
 				const angle = ((i * degIncrement) * Math.PI) / 180;
 				const preX = Math.cos(angle);
 				const preY = Math.sin(angle);
@@ -87,20 +91,20 @@ class CometRender {
 					thickness: 1
 				});
 			}
-		} else if (t.type === 'oscilloscope-stroked' || t.type === 'oscilloscope-filled') {
+		} else if (t.type === 'waveshape-stroked' || t.type === 'waveshape-filled') {
+			const array = new Uint8Array(t.node.frequencyBinCount);
+			t.node.getByteTimeDomainData(array);
 			t.hue = t.hue + 0.5 > 360 ? 0 : t.hue + 0.5;
-			if (t.type === 'oscilloscope-stroked') {
-				t.paper.context.strokeStyle = `hsl(${t.hue}, 50%, 50%)`;
-			} else if (t.type === 'oscilloscope-filled') {
-				t.paper.context.fillStyle = `hsl(${t.hue}, 50%, 50%)`;
+			if (t.type === 'waveshape-stroked') {
+				t.paper.style({ stroke: `hsl(${t.hue}, 100%, 50%)`, thickness: 5 });
+			} else if (t.type === 'waveshape-filled') {
+				t.paper.style({ fill: `hsl(${t.hue}, 100%, 50%)`, thickness: 5 });
 			}
-			t.paper.context.lineWidth = 15;
 			t.paper.context.beginPath();
-			const sliceWidth = t.paper.width * 1.0 / array.length;
+			const sliceWidth = t.paper.width / array.length;
 			let x = 0;
 			for (let i = 0; i < array.length; ++i) {
-				const v = array[i] / 128.0;
-				const y = v * paper.height / 2;
+				const y = (array[i] / 128) * t.paper.height / 2;
 				if (i === 0) {
 					t.paper.context.moveTo(x, y);
 				} else {
@@ -108,25 +112,13 @@ class CometRender {
 				}
 				x += sliceWidth;
 			}
-			if (t.type === 'oscilloscope-stroked') {
+			if (t.type === 'waveshape-stroked') {
 				t.paper.context.stroke();
-			} else if (t.type === 'oscilloscope-filled') {
+			} else if (t.type === 'waveshape-filled') {
 				t.paper.context.lineTo(t.paper.width, t.paper.height);
 				t.paper.context.lineTo(0, t.paper.height);
 				t.paper.context.fill();
 			}
-		} else if (t.type === 'blackboard') {
-			/*
-			points.forEach(function (point, key) {
-				t.paper.circle({
-					x: point.x,
-					y: point.y,
-					r: 50,
-					fill: point.color,
-					shadow: '0 0 20 ' + point.color
-				});
-			});
-			*/
 		}
 		if (t.running) {
 			t.frame_request = requestAnimationFrame(function (timestamp) { t.render(timestamp); });

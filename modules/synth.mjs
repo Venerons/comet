@@ -3,17 +3,8 @@ class CometSynth {
 		const t = this;
 		t.context = new window.AudioContext();
 		t.voices = new Map();
-
-		t.wavetables = {
-			horn: {
-				real: new Float32Array([0, 0.4, 0.4, 1, 1, 1, 0.3, 0.7, 0.6, 0.5, 0.9, 0.8]),
-				imag: new Float32Array(12)
-			}
-		};
-		Object.keys(t.wavetables).forEach(function (name) {
-			const table = t.wavetables[name];
-			table.wave = new PeriodicWave(t.context, { real: table.real, imag: table.imag });
-		});
+		t.waves = new Map();
+		t.convolvers = new Map();
 
 		t.settings = {};
 		t.default_settings = {
@@ -36,16 +27,23 @@ class CometSynth {
 				frequency: t.context.sampleRate / 2, // 350
 				gain: 0
 			},
-			effect: {
-				type: 'none',
-				buffer: 256
-			},
 			compressor: {
 				threshold: -24,
 				knee: 30,
 				ratio: 12,
 				attack: 0.003,
 				release: 0.25
+			},
+			waveshaper: {
+				curve: 'none',
+				oversample: 'none'
+			},
+			envelope: {
+				attack: 0,
+				release: 0
+			},
+			convolver: {
+				type: 'none'
 			},
 			analyser: {
 				fftSize: 512,
@@ -56,12 +54,12 @@ class CometSynth {
 		};
 
 		t.nodes = {};
-		t.nodes.effect = new GainNode(t.context);
 		t.nodes.compressor = new DynamicsCompressorNode(t.context);
+		t.nodes.waveshaper = new WaveShaperNode(t.context);
+		t.nodes.envelope = new GainNode(t.context);
+		t.nodes.convolver = new ConvolverNode(t.context);
 		t.nodes.analyser = new AnalyserNode(t.context);
 
-		t.nodes.effect.connect(t.nodes.compressor);
-		t.nodes.compressor.connect(t.nodes.analyser);
 		t.nodes.analyser.connect(t.context.destination);
 
 		t.config(t.default_settings);
@@ -90,9 +88,8 @@ class CometSynth {
 					voice.osc2.detune.value = t.settings.osc2.detune;
 					voice.mix2.gain.value = t.settings.osc2.mix;
 				}
-				// BIQUAD FILTER
+				// FILTER
 				if (settings.filter && voice.filter) {
-					voice.osc2.detune.value = t.settings.osc2.detune;
 					voice.filter.type = t.settings.filter.type;
 					voice.filter.Q.value = t.settings.filter.Q;
 					voice.filter.detune.value = t.settings.filter.detune;
@@ -102,18 +99,55 @@ class CometSynth {
 			});
 		}
 
-		// EFFECT
-		if (settings.effect) {
-			// TODO
+		// WAVESHAPER
+		if (settings.waveshaper) {
+			if (t.settings.waveshaper.curve === 'none') {
+				t.nodes.compressor.connect(t.nodes.envelope);
+				t.nodes.waveshaper.disconnect();
+			} else if (t.settings.waveshaper.curve === 'distorsion') {
+				const make_distorsion_curve = function (amount) {
+					const k = typeof amount === 'number' ? amount : 50;
+					const n_samples = 44100;
+					const curve = new Float32Array(n_samples);
+					const deg = Math.PI / 180;
+					for (let i = 0; i < n_samples; ++i) {
+						const x = i * 2 / n_samples - 1;
+						curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+					}
+					return curve;
+				};
+				t.nodes.waveshaper.curve = make_distorsion_curve(100);
+				t.nodes.waveshaper.oversample = t.settings.waveshaper.oversample;
+				t.nodes.compressor.connect(t.nodes.waveshaper);
+				t.nodes.waveshaper.connect(t.nodes.envelope);
+			}
 		}
 
-		// DYNAMICS COMPRESSOR
+		// COMPRESSOR
 		if (settings.compressor) {
 			t.nodes.compressor.threshold.value = t.settings.compressor.threshold;
 			t.nodes.compressor.knee.value = t.settings.compressor.knee;
 			t.nodes.compressor.ratio.value = t.settings.compressor.ratio;
 			t.nodes.compressor.attack.value = t.settings.compressor.attack;
 			t.nodes.compressor.release.value = t.settings.compressor.release;
+		}
+
+		// ENVELOPE
+		if (settings.envelope) {
+			// TODO
+			t.nodes.envelope.gain.value = 1;
+		}
+
+		// CONVOLVER
+		if (settings.convolver) {
+			if (t.settings.convolver.type === 'none') {
+				t.nodes.envelope.connect(t.nodes.analyser);
+				t.nodes.convolver.disconnect();
+			} else if (t.convolvers.has(t.settings.convolver.type)) {
+				t.nodes.convolver.buffer = t.convolvers.get(t.settings.convolver.type);
+				t.nodes.envelope.connect(t.nodes.convolver);
+				t.nodes.convolver.connect(t.nodes.analyser);
+			}
 		}
 
 		// ANALYSER
@@ -135,8 +169,9 @@ class CometSynth {
 		// OSCILLATOR 1
 		if (settings.osc1.type !== 'none') {
 			const options = {};
-			if (t.wavetables[settings.osc1.type]) {
-				options.periodicWave = t.wavetables[settings.osc1.type].wave;
+			if (t.waves.has(settings.osc1.type)) {
+				options.type = 'custom';
+				options.periodicWave = t.waves.get(settings.osc1.type);
 			} else {
 				options.type = settings.osc1.type;
 			}
@@ -150,8 +185,8 @@ class CometSynth {
 		// OSCILLATOR 2
 		if (settings.osc2.type !== 'none') {
 			const options = {};
-			if (t.wavetables[settings.osc2.type]) {
-				options.periodicWave = t.wavetables[settings.osc2.type].wave;
+			if (t.waves.has(settings.osc2.type)) {
+				options.periodicWave = t.waves.get(settings.osc2.type);
 			} else {
 				options.type = settings.osc2.type;
 			}
@@ -165,7 +200,7 @@ class CometSynth {
 		// VELOCITY GAIN
 		voice.velocity = new GainNode(t.context, { gain: velocity || 1 });
 
-		// BIQUAD FILTER
+		// FILTER
 		voice.filter = new BiquadFilterNode(t.context, {
 			type: settings.filter.type,
 			Q: settings.filter.Q,
@@ -184,7 +219,7 @@ class CometSynth {
 			voice.mix2.connect(voice.velocity);
 		}
 		voice.velocity.connect(voice.filter);
-		voice.filter.connect(t.nodes.effect);
+		voice.filter.connect(t.nodes.compressor);
 
 		// COLLECTION
 		if (t.voices.has(voice.id)) {
@@ -233,6 +268,20 @@ class CometSynth {
 			voice.filter.disconnect();
 			t.voices.delete(voice_id);
 		}
+	}
+
+	load_wave(name, wave_table) {
+		const t = this;
+		const wave = new PeriodicWave(t.context, {
+			real: new Float32Array(wave_table.real),
+			imag: new Float32Array(wave_table.imag)
+		});
+		t.waves.set(name, wave);
+	}
+
+	load_convolver(name, buffer) {
+		const t = this;
+		t.convolvers.set(name, buffer);
 	}
 }
 

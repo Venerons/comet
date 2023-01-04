@@ -1,0 +1,425 @@
+@import url('https://fonts.googleapis.com/css2?family=Audiowide');
+
+:root {
+	--color-bg: #333333;
+	--color-fg: whitesmoke;
+	--color-main: #288edf;
+	--color-red: #FB6368;
+	--color-orange: #FF9900;
+	--color-yellow: #F3CF3A;
+	--color-green: #3DC186;
+	--color-teal: #37BBBA;
+	--color-blue: #4DC3FA;
+	--color-purple: #9003f1;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+:root,
+html,
+body {
+	-ms-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	-moz-text-size-adjust: auto;
+	-moz-text-size-adjust: 100%;
+	font: 400 normal 14px/1.2 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	background-color: var(--color-bg);
+	color: var(--color-fg);
+	overflow: hidden;
+}
+
+:disabled {
+	cursor: default;
+	opacity: 0.45;
+	pointer-events: none;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+.splash {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #333;
+	z-index: 100;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
+}
+
+.aside {
+	position: fixed;
+	background: var(--color-bg);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	overflow: hidden;
+	font-family: 'Audiowide';
+}
+.aside.top {
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 60px;
+	flex-flow: row nowrap;
+}
+.aside.right {
+	top: 0;
+	right: 0;
+	width: 60px;
+	height: 100vh;
+	flex-flow: column nowrap;
+}
+.aside.bottom {
+	bottom: 0;
+	left: 0;
+	width: 100vw;
+	height: 60px;
+	flex-flow: row nowrap;
+}
+.aside.left {
+	top: 0;
+	left: 0;
+	width: 60px;
+	height: 100vh;
+	flex-flow: column nowrap;
+}
+
+.button {
+	will-change: '';
+	cursor: pointer;
+	position: relative;
+	width: 44px;
+	min-width: 44px;
+	height: 44px;
+	min-height: 44px;
+	margin: 0.5rem;
+	padding: 0.5rem;
+	vertical-align: middle;
+	font-size: 0.7rem;
+	font-family: 'Audiowide';
+	text-align: center;
+	text-overflow: ellipsis;
+	text-transform: uppercase;
+	user-select: none;
+	outline: 0;
+	border: 1px solid var(--color-fg);
+	border-radius: 0.28571429rem;
+	transition:
+		opacity 0.1s ease,
+		background-color 0.1s ease,
+		color 0.1s ease;
+	background-color: var(--color-fg);
+	color: var(--color-bg);
+}
+.button::-moz-focus-inner {
+	border: none;
+}
+.button:hover,
+.button:focus,
+.button:active,
+.button.active {
+	background-color: var(--color-bg);
+	color: var(--color-fg);
+}
+
+.module {
+	position: fixed;
+	top: 0.6rem;
+	right: calc(0.6rem + 60px);
+	width: 400px;
+	padding: 1.2rem;
+	font-family: 'Audiowide';
+	border-radius: 0.28571429rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+	background-color: var(--color-fg);
+	color: var(--color-bg);
+}
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+	margin: 1.2rem 0 0.6rem 0;
+	font-weight: bold;
+}
+
+.h1:first-child,
+.h2:first-child,
+.h3:first-child,
+.h4:first-child,
+.h5:first-child,
+.h6:first-child {
+	margin-top: 0;
+}
+
+.h1 { font-size: 2rem }
+.h2 { font-size: 1.71rem }
+.h3 { font-size: 1.28rem }
+.h4 { font-size: 1.07rem }
+.h5 { font-size: 1rem }
+.h6 { font-size: 0.8rem }
+
+.p {
+	display: block;
+	margin: 0.6rem 0;
+}
+
+.ul li {
+	margin-left: 1.2rem;
+}
+
+.link {
+	color: var(--color-main);
+	text-decoration: none;
+}
+.link:hover {
+	text-decoration: underline;
+}
+
+.form-field {
+	display: block;
+	width: 100%;
+	clear: both;
+	margin-top: 0.6rem;
+}
+.form-field > label {
+	display: block;
+	margin: 0 0 0.28571429rem 0;
+	font-size: 0.92857143rem;
+	font-weight: bold;
+}
+.form-field > input,
+.form-field > select,
+.form-field > textarea,
+.form-field > button {
+	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
+	vertical-align: top;
+}
+
+.select {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	position: relative;
+	cursor: pointer;
+	padding: 0.67857143rem 1rem;
+	font: inherit;
+	text-transform: none;
+	text-overflow: ellipsis;
+	outline: 0;
+	transition: border-color 0.1s ease;
+	border: 1px solid var(--color-bg);
+	background-color: var(--color-bg);
+	color: var(--color-fg);
+	border-radius: 0.28571429rem;
+}
+.select:-moz-focusring {
+	color: transparent;
+	text-shadow: 0 0 0 #000000;
+}
+
+.range {
+	appearance: none;
+	background: transparent;
+	height: 1.8rem;
+	padding: 0;
+	border-radius: 0.28571429rem;
+	outline: 1px solid var(--color-bg);
+	background-color: var(--color-bg);
+}
+.range::-moz-range-thumb {
+	height: 1.8rem;
+	width: 1.8rem;
+	cursor: pointer;
+	border-radius: 0.28571429rem;
+	border: 1px solid var(--color-fg);
+	background-color: var(--color-fg);
+}
+
+/* RED */
+.button.red {
+	border: 1px solid var(--color-red);
+	background-color: var(--color-red);
+}
+.button.red:hover,
+.button.red:focus,
+.button.red:active,
+.button.red.active {
+	background-color: var(--color-bg);
+	color: var(--color-red);
+}
+.module.red {
+	border: 1px solid var(--color-red);
+	background-color: var(--color-red);
+}
+.module.red .select {
+	color: var(--color-red);
+}
+.module.red .range::-moz-range-thumb {
+	border: 1px solid var(--color-red);
+	background-color: var(--color-red);
+}
+
+/* ORANGE */
+.button.orange {
+	border: 1px solid var(--color-orange);
+	background-color: var(--color-orange);
+}
+.button.orange:hover,
+.button.orange:focus,
+.button.orange:active,
+.button.orange.active {
+	background-color: var(--color-bg);
+	color: var(--color-orange);
+}
+.module.orange {
+	border: 1px solid var(--color-orange);
+	background-color: var(--color-orange);
+}
+.module.orange .select {
+	color: var(--color-orange);
+}
+.module.orange .range::-moz-range-thumb {
+	border: 1px solid var(--color-orange);
+	background-color: var(--color-orange);
+}
+
+/* YELLOW */
+.button.yellow {
+	border: 1px solid var(--color-yellow);
+	background-color: var(--color-yellow);
+}
+.button.yellow:hover,
+.button.yellow:focus,
+.button.yellow:active,
+.button.yellow.active {
+	background-color: var(--color-bg);
+	color: var(--color-yellow);
+}
+.module.yellow {
+	border: 1px solid var(--color-yellow);
+	background-color: var(--color-yellow);
+}
+.module.yellow .select {
+	color: var(--color-yellow);
+}
+.module.yellow .range::-moz-range-thumb {
+	border: 1px solid var(--color-yellow);
+	background-color: var(--color-yellow);
+}
+
+/* GREEN */
+.button.green {
+	border: 1px solid var(--color-green);
+	background-color: var(--color-green);
+}
+.button.green:hover,
+.button.green:focus,
+.button.green:active,
+.button.green.active {
+	background-color: var(--color-bg);
+	color: var(--color-green);
+}
+.module.green {
+	border: 1px solid var(--color-green);
+	background-color: var(--color-green);
+}
+.module.green .select {
+	color: var(--color-green);
+}
+.module.green .range::-moz-range-thumb {
+	border: 1px solid var(--color-green);
+	background-color: var(--color-green);
+}
+
+/* TEAL */
+.button.teal {
+	border: 1px solid var(--color-teal);
+	background-color: var(--color-teal);
+}
+.button.teal:hover,
+.button.teal:focus,
+.button.teal:active,
+.button.teal.active {
+	background-color: var(--color-bg);
+	color: var(--color-teal);
+}
+.module.teal {
+	border: 1px solid var(--color-teal);
+	background-color: var(--color-teal);
+}
+.module.teal .select {
+	color: var(--color-teal);
+}
+.module.teal .range::-moz-range-thumb {
+	border: 1px solid var(--color-teal);
+	background-color: var(--color-teal);
+}
+
+/* BLUE */
+.button.blue {
+	border: 1px solid var(--color-blue);
+	background-color: var(--color-blue);
+}
+.button.blue:hover,
+.button.blue:focus,
+.button.blue:active,
+.button.blue.active {
+	background-color: var(--color-bg);
+	color: var(--color-blue);
+}
+.module.blue {
+	border: 1px solid var(--color-blue);
+	background-color: var(--color-blue);
+}
+.module.blue .select {
+	color: var(--color-blue);
+}
+.module.blue .range::-moz-range-thumb {
+	border: 1px solid var(--color-blue);
+	background-color: var(--color-blue);
+}
+
+/* PURPLE */
+.button.purple {
+	border: 1px solid var(--color-purple);
+	background-color: var(--color-purple);
+}
+.button.purple:hover,
+.button.purple:focus,
+.button.purple:active,
+.button.purple.active {
+	background-color: var(--color-bg);
+	color: var(--color-purple);
+}
+.module.purple {
+	border: 1px solid var(--color-purple);
+	background-color: var(--color-purple);
+}
+.module.purple .select {
+	color: var(--color-purple);
+}
+.module.purple .range::-moz-range-thumb {
+	border: 1px solid var(--color-purple);
+	background-color: var(--color-purple);
+}
