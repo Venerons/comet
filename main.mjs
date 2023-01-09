@@ -11,34 +11,33 @@ const Synth = new CometSynth();
 	const $optgroup1 = $('#osc1-type').find('optgroup[label="Periodic Waves"]');
 	const $optgroup2 = $('#osc2-type').find('optgroup[label="Periodic Waves"]');
 	[
-		{ label: 'Saw', name: 'custom_saw', url: 'waves/saw.json' },
-		{ label: 'Square', name: 'custom_square', url: 'waves/square.json' },
+		{ label: 'Saw',      name: 'custom_saw',      url: 'waves/saw.json' },
+		{ label: 'Square',   name: 'custom_square',   url: 'waves/square.json' },
 		{ label: 'Triangle', name: 'custom_triangle', url: 'waves/triangle.json' },
-		{ label: 'Boh', name: 'boh', url: 'waves/boh.json' },
-		{ label: 'Noise', name: 'noise', url: 'waves/noise.json' },
-		{ label: 'Pulse', name: 'pulse', url: 'waves/pulse.json' },
-		{ label: 'Warm Saw', name: 'warm_saw', url: 'waves/warm_saw.json' },
-		{ label: 'Horn', name: 'horn', url: 'waves/horn.json' },
-		{ label: 'Celeste', name: 'celeste', url: 'waves/celeste.json' }
+		{ label: 'Boh',      name: 'boh',             url: 'waves/boh.json' },
+		{ label: 'Noise',    name: 'noise',           url: 'waves/noise.json' },
+		{ label: 'Pulse',    name: 'pulse',           url: 'waves/pulse.json' },
+		{ label: 'Warm Saw', name: 'warm_saw',        url: 'waves/warm_saw.json' },
+		{ label: 'Horn',     name: 'horn',            url: 'waves/horn.json' },
+		{ label: 'Celeste',  name: 'celeste',         url: 'waves/celeste.json' }
 	].forEach(function (file) {
 		const $option1 = $(`<option value="${file.name}" disabled>${file.label}</option>`);
 		const $option2 = $(`<option value="${file.name}" disabled>${file.label}</option>`);
 		$optgroup1.append($option1);
 		$optgroup2.append($option2);
-		fetch(file.url).then(function(response) {
-			//console.log(response.type, response.URL, response.useFinalURL, response.status, response.ok, response.statusText, response.headers, response.bodyUsed);
-			if (!response.ok) {
-				console.error(`Fetch request failed for wave ${file.name}`);
-			} else {
-				response.json().then(function (json) {
-					Synth.load_wave(file.name, json);
-					$option1.prop('disabled', false);
-					$option2.prop('disabled', false);
-				});
-			}
-		}).catch(function (e) {
-			console.error(`Fetch request failed for wave ${file.name}: ${e.toString()}`);
-		});
+		fetch(file.url)
+			.then(function (response) {
+				if (!response.ok) {
+					throw new Error('Network response was not OK');
+				}
+				return response.json();
+			}).then(function (data) {
+				Synth.load_wave(file.name, data);
+				$option1.prop('disabled', false);
+				$option2.prop('disabled', false);
+			}).catch(function (e) {
+				console.error(`Failed wave loading ${file.name}: ${e.toString()}`);
+			});
 	});
 })();
 
@@ -53,12 +52,12 @@ const Synth = new CometSynth();
 	}
 	const $select = $('#convolver-type');
 	[
-		{ label: 'Noise', name: 'noise', buffer: noise_buffer },
-		{ label: 'Hall', name: 'hall', url: 'convolvers/hall.ogg' },
-		{ label: 'Telephone', name: 'telephone', url: 'convolvers/telephone.wav' },
-		{ label: 'Muffler', name: 'muffler', url: 'convolvers/muffler.wav' },
-		{ label: 'Spring Feedback', name: 'spring', url: 'convolvers/spring_feedback.wav' },
-		{ label: 'Echo', name: 'echo', url: 'convolvers/echo.wav' }
+		{ label: 'Noise',           name: 'noise',     buffer: noise_buffer },
+		{ label: 'Hall',            name: 'hall',      url: 'convolvers/hall.ogg' },
+		{ label: 'Telephone',       name: 'telephone', url: 'convolvers/telephone.wav' },
+		{ label: 'Muffler',         name: 'muffler',   url: 'convolvers/muffler.wav' },
+		{ label: 'Spring Feedback', name: 'spring',    url: 'convolvers/spring_feedback.wav' },
+		{ label: 'Echo',            name: 'echo',      url: 'convolvers/echo.wav' }
 	].forEach(function (file) {
 		const $option = $(`<option value="${file.name}" disabled>${file.label}</option>`);
 		$select.append($option);
@@ -66,23 +65,20 @@ const Synth = new CometSynth();
 			Synth.load_convolver(file.name, file.buffer);
 			$option.prop('disabled', false);
 		} else if (file.url) {
-			fetch(file.url).then(function(response) {
-				//console.log(response.type, response.URL, response.useFinalURL, response.status, response.ok, response.statusText, response.headers, response.bodyUsed);
-				if (!response.ok) {
-					console.error(`Fetch request failed for convolver ${file.name}`);
-				} else {
-					response.arrayBuffer().then(function (buffer) {
-						Synth.context.decodeAudioData(buffer).then(function (buffer) {
-							Synth.load_convolver(file.name, buffer);
-							$option.prop('disabled', false);
-						}).catch(function (e) {
-							console.error(`Error decoding convolver ${file.name}: ${e.toString()}`);
-						});
-					});
-				}
-			}).catch(function (e) {
-				console.error(`Fetch request failed for convolver ${file.name}: ${e.toString()}`);
-			});
+			fetch(file.url)
+				.then(function (response) {
+					if (!response.ok) {
+						throw new Error('Network response was not OK');
+					}
+					return response.arrayBuffer();
+				}).then(function (data) {
+					return Synth.context.decodeAudioData(data);
+				}).then(function (buffer) {
+					Synth.load_convolver(file.name, buffer);
+					$option.prop('disabled', false);
+				}).catch(function (e) {
+					console.error(`Failed convolver loading ${file.name}: ${e.toString()}`);
+				});
 		}
 	});
 })();
@@ -90,37 +86,30 @@ const Synth = new CometSynth();
 const PointerController = new CometPointerController({
 	surface: document.querySelector('#surface'),
 	on_start: function (control_id, osc_frequency, osc_velocity, filter_frequency) {
-		//console.log('on_control_start', control_id, osc_frequency, osc_velocity, filter_frequency);
 		Synth.add_voice(control_id, osc_frequency, osc_velocity, filter_frequency);
 	},
 	on_update: function (control_id, osc_frequency, osc_velocity, filter_frequency) {
-		//console.log('on_control_update', control_id, osc_frequency, osc_velocity, filter_frequency);
 		Synth.update_voice(control_id, osc_frequency, osc_velocity, filter_frequency);
 	},
 	on_stop: function (control_id) {
-		//console.log('on_control_stop', control_id);
 		Synth.remove_voice(control_id);
 	}
 });
 
 const KeyboardController = new CometKeyboardController({
 	on_start: function (control_id, osc_frequency, osc_velocity) {
-		//console.log('on_control_start', control_id, osc_frequency, osc_velocity);
 		Synth.add_voice(control_id, osc_frequency, osc_velocity);
 	},
 	on_stop: function (control_id) {
-		//console.log('on_control_stop', control_id);
 		Synth.remove_voice(control_id);
 	}
 });
 
 const MIDIController = new CometMIDIController({
 	on_start: function (control_id, osc_frequency, osc_velocity) {
-		//console.log('on_control_start', control_id, osc_frequency, osc_velocity);
 		Synth.add_voice(control_id, osc_frequency, osc_velocity);
 	},
 	on_stop: function (control_id) {
-		//console.log('on_control_stop', control_id);
 		Synth.remove_voice(control_id);
 	}
 });
