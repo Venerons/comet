@@ -67,8 +67,9 @@ body {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	overflow: hidden;
 	font-family: 'Audiowide';
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 .aside.top {
 	top: 0;
