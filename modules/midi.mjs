@@ -1,8 +1,10 @@
 class CometMIDIController {
+	#on_start;
+	#on_stop;
 	constructor(options) {
 		const t = this;
-		t.on_start = options.on_start;
-		t.on_stop = options.on_stop;
+		t.#on_start = options.on_start;
+		t.#on_stop = options.on_stop;
 		if (!navigator.requestMIDIAccess) {
 			console.error('MIDI not supported');
 			return;
@@ -57,18 +59,18 @@ class CometMIDIController {
 
 	start(note, frequency, velocity) {
 		const t = this;
-		if (t.on_start) {
+		if (t.#on_start) {
 			const control_id = `midi_${note}`;
 			const osc_frequency = frequency;
 			const osc_velocity = velocity;
-			t.on_start(control_id, osc_frequency, osc_velocity);
+			t.#on_start(control_id, osc_frequency, osc_velocity);
 		}
 	}
 
 	stop(note) {
 		const t = this;
-		if (t.on_stop) {
-			t.on_stop(`midi_${note}`);
+		if (t.#on_stop) {
+			t.#on_stop(`midi_${note}`);
 		}
 	}
 }
