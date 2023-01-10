@@ -10,36 +10,36 @@ class CometPointerController {
 		t.#on_update = options.on_update;
 		t.#on_stop = options.on_stop;
 		const pointers = new Set();
-		t.surface.addEventListener('pointerdown', function (e) {
+		t.#surface.addEventListener('pointerdown', function (e) {
 			if (!pointers.has(e.pointerId)) {
 				pointers.add(e.pointerId);
 				t.start(e);
 			}
 		});
-		t.surface.addEventListener('pointermove', function (e) {
+		t.#surface.addEventListener('pointermove', function (e) {
 			if (pointers.has(e.pointerId)) {
 				t.update(e);
 			}
 		});
-		t.surface.addEventListener('pointerup', function (e) {
+		t.#surface.addEventListener('pointerup', function (e) {
 			if (pointers.has(e.pointerId)) {
 				pointers.delete(e.pointerId);
 				t.stop(e);
 			}
 		});
-		t.surface.addEventListener('pointercancel', function (e) {
+		t.#surface.addEventListener('pointercancel', function (e) {
 			if (pointers.has(e.pointerId)) {
 				pointers.delete(e.pointerId);
 				t.stop(e);
 			}
 		});
-		t.surface.addEventListener('pointerout', function (e) {
+		t.#surface.addEventListener('pointerout', function (e) {
 			if (pointers.has(e.pointerId)) {
 				pointers.delete(e.pointerId);
 				t.stop(e);
 			}
 		});
-		t.surface.addEventListener('pointerleave', function (e) {
+		t.#surface.addEventListener('pointerleave', function (e) {
 			if (pointers.has(e.pointerId)) {
 				pointers.delete(e.pointerId);
 				t.stop(e);
@@ -51,9 +51,9 @@ class CometPointerController {
 		const t = this;
 		if (t.#on_start) {
 			const control_id = `pointer_${e.pointerId}`;
-			const osc_frequency = CometPointerController.smart_osc_frequency(e.pageX, t.surface.width);
+			const osc_frequency = CometPointerController.smart_osc_frequency(e.pageX, t.#surface.width);
 			const osc_velocity = e.pressure;
-			const filter_frequency = CometPointerController.smart_filter_frequency(e.pageY, t.surface.height);
+			const filter_frequency = CometPointerController.smart_filter_frequency(e.pageY, t.#surface.height);
 			t.#on_start(control_id, osc_frequency, osc_velocity, filter_frequency);
 		}
 	}
@@ -62,9 +62,9 @@ class CometPointerController {
 		const t = this;
 		if (t.#on_update) {
 			const control_id = `pointer_${e.pointerId}`;
-			const osc_frequency = CometPointerController.smart_osc_frequency(e.pageX, t.surface.width);
+			const osc_frequency = CometPointerController.smart_osc_frequency(e.pageX, t.#surface.width);
 			const osc_velocity = e.pressure;
-			const filter_frequency = CometPointerController.smart_filter_frequency(e.pageY, t.surface.height);
+			const filter_frequency = CometPointerController.smart_filter_frequency(e.pageY, t.#surface.height);
 			t.#on_update(control_id, osc_frequency, osc_velocity, filter_frequency);
 		}
 	}
