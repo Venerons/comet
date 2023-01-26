@@ -128,16 +128,26 @@ const Synth = new CometSynth();
 	});
 })();
 
+const Render = new CometRender(document.querySelector('#surface'), Synth.nodes.analyser);
+Render.resize(window.innerWidth, window.innerHeight);
+window.addEventListener('resize', function () {
+	Render.resize(window.innerWidth, window.innerHeight);
+});
+Render.start();
+
 const PointerController = new CometPointerController({
 	surface: document.querySelector('#surface'),
-	on_start: function (control_id, osc_frequency, osc_velocity, filter_frequency) {
+	on_start: function (control_id, osc_frequency, osc_velocity, filter_frequency, event) {
 		Synth.add_voice(control_id, osc_frequency, osc_velocity, filter_frequency);
+		Render.add_pointer(event);
 	},
-	on_update: function (control_id, osc_frequency, osc_velocity, filter_frequency) {
+	on_update: function (control_id, osc_frequency, osc_velocity, filter_frequency, event) {
 		Synth.update_voice(control_id, osc_frequency, osc_velocity, filter_frequency);
+		Render.update_pointer(event);
 	},
-	on_stop: function (control_id) {
+	on_stop: function (control_id, event) {
 		Synth.remove_voice(control_id);
+		Render.remove_pointer(event);
 	}
 });
 
@@ -158,13 +168,6 @@ const MIDIController = new CometMIDIController({
 		Synth.remove_voice(control_id);
 	}
 });
-
-const Render = new CometRender(document.querySelector('#surface'), Synth.nodes.analyser);
-Render.resize(window.innerWidth, window.innerHeight);
-window.addEventListener('resize', function () {
-	Render.resize(window.innerWidth, window.innerHeight);
-});
-Render.start();
 
 $('.splash').delay(2000).fadeOut();
 $('#module-info').delay(8000).fadeOut();

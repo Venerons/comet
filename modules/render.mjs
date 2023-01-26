@@ -3,9 +3,10 @@ class CometRender {
 		const t = this;
 		t.running = false;
 		t.node = analyzer_node;
-		t.type = 'spectrum-round';
+		t.type = 'spectrum_1';
 		t.paper = new Palette(canvas);
 		t.hue = 0;
+		t.pointers = new Map();
 	}
 
 	start() {
@@ -24,28 +25,34 @@ class CometRender {
 		this.paper.size(w, h);
 	}
 
+	add_pointer(e) {
+		const t = this;
+		if (!t.pointers.has(e.pointerId)) {
+			t.pointers.set(e.pointerId, e);
+		}
+	}
+
+	update_pointer(e) {
+		const t = this;
+		if (t.pointers.has(e.pointerId)) {
+			t.pointers.set(e.pointerId, e);
+		}
+	}
+
+	remove_pointer(e) {
+		const t = this;
+		if (t.pointers.has(e.pointerId)) {
+			t.pointers.delete(e.pointerId, e);
+		}
+	}
+
 	render(timestamp) {
 		const t = this;
 		if (!t.running) {
 			return;
 		}
 		t.paper.clear();
-		if (t.type === 'spectrum-linear') {
-			const array = new Uint8Array(t.node.frequencyBinCount);
-			t.node.getByteFrequencyData(array);
-			const gap = t.paper.width / (array.length * 2);
-			const max_height = t.paper.height / 4 * 3;
-			for (let i = 0; i < array.length; ++i) {
-				const newy = t.paper.height - (max_height * array[i] / 256);
-				t.paper.rect({
-					x: i * (gap * 2),
-					y: newy,
-					width: gap,
-					height: t.paper.height,
-					fill: `hsl(${i * 360 / array.length}, 100%, 50%)`
-				});
-			}
-		} else if (t.type === 'spectrum-round') {
+		if (t.type === 'spectrum_1') {
 			const array = new Uint8Array(t.node.frequencyBinCount);
 			t.node.getByteFrequencyData(array);
 			const degIncrement = 360 / array.length;
@@ -68,7 +75,7 @@ class CometRender {
 					thickness: 1
 				});
 			}
-		} else if (t.type === 'spectrum-roundinset') {
+		} else if (t.type === 'spectrum_2') {
 			const array = new Uint8Array(t.node.frequencyBinCount);
 			t.node.getByteFrequencyData(array);
 			const degIncrement = 360 / array.length;
@@ -91,13 +98,28 @@ class CometRender {
 					thickness: 1
 				});
 			}
-		} else if (t.type === 'waveshape-stroked' || t.type === 'waveshape-filled') {
+		} else if (t.type === 'spectrum_3') {
+			const array = new Uint8Array(t.node.frequencyBinCount);
+			t.node.getByteFrequencyData(array);
+			const gap = t.paper.width / (array.length * 2);
+			const max_height = t.paper.height / 4 * 3;
+			for (let i = 0; i < array.length; ++i) {
+				const newy = t.paper.height - (max_height * array[i] / 256);
+				t.paper.rect({
+					x: i * (gap * 2),
+					y: newy,
+					width: gap,
+					height: t.paper.height,
+					fill: `hsl(${i * 360 / array.length}, 100%, 50%)`
+				});
+			}
+		} else if (t.type === 'waveshape_1' || t.type === 'waveshape_2') {
 			const array = new Uint8Array(t.node.frequencyBinCount);
 			t.node.getByteTimeDomainData(array);
 			t.hue = t.hue + 0.5 > 360 ? 0 : t.hue + 0.5;
-			if (t.type === 'waveshape-stroked') {
+			if (t.type === 'waveshape_1') {
 				t.paper.style({ stroke: `hsl(${t.hue}, 100%, 50%)`, thickness: 5 });
-			} else if (t.type === 'waveshape-filled') {
+			} else if (t.type === 'waveshape_2') {
 				t.paper.style({ fill: `hsl(${t.hue}, 100%, 50%)`, thickness: 5 });
 			}
 			t.paper.context.beginPath();
@@ -112,13 +134,24 @@ class CometRender {
 				}
 				x += sliceWidth;
 			}
-			if (t.type === 'waveshape-stroked') {
+			if (t.type === 'waveshape_1') {
 				t.paper.context.stroke();
-			} else if (t.type === 'waveshape-filled') {
+			} else if (t.type === 'waveshape_2') {
 				t.paper.context.lineTo(t.paper.width, t.paper.height);
 				t.paper.context.lineTo(0, t.paper.height);
 				t.paper.context.fill();
 			}
+		} else if (t.type === 'pointers') {
+			t.hue = t.hue + 0.5 > 360 ? 0 : t.hue + 0.5;
+			t.pointers.forEach(function (e) {
+				t.paper.circle({
+					x: e.pageX,
+					y: e.pageY,
+					r: 100,
+					stroke: `hsl(${t.hue}, 100%, 50%)`,
+					thickness: 5
+				});
+			});
 		}
 		if (t.running) {
 			t.frame_request = requestAnimationFrame(function (timestamp) { t.render(timestamp); });

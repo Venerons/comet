@@ -54,7 +54,7 @@ class CometPointerController {
 			const osc_frequency = CometPointerController.smart_osc_frequency(e.pageX, t.#surface.width);
 			const osc_velocity = e.pressure;
 			const filter_frequency = CometPointerController.smart_filter_frequency(e.pageY, t.#surface.height);
-			t.#on_start(control_id, osc_frequency, osc_velocity, filter_frequency);
+			t.#on_start(control_id, osc_frequency, osc_velocity, filter_frequency, e);
 		}
 	}
 
@@ -65,14 +65,15 @@ class CometPointerController {
 			const osc_frequency = CometPointerController.smart_osc_frequency(e.pageX, t.#surface.width);
 			const osc_velocity = e.pressure;
 			const filter_frequency = CometPointerController.smart_filter_frequency(e.pageY, t.#surface.height);
-			t.#on_update(control_id, osc_frequency, osc_velocity, filter_frequency);
+			t.#on_update(control_id, osc_frequency, osc_velocity, filter_frequency, e);
 		}
 	}
 
 	stop(e) {
 		const t = this;
 		if (t.#on_stop) {
-			t.#on_stop(`pointer_${e.pointerId}`);
+			const control_id = `pointer_${e.pointerId}`;
+			t.#on_stop(control_id, e);
 		}
 	}
 
