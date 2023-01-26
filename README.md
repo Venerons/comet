@@ -7,7 +7,7 @@ It features multiple ways to customize the sound, to control it and many visual 
 ## Licensing
 
 Comet  
-Copyright (c) 2014-2022 Daniele Veneroni  
+Copyright (c) 2014-2023 Daniele Veneroni  
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  
 

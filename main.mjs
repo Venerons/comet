@@ -10,16 +10,21 @@ const Synth = new CometSynth();
 (function () {
 	const $optgroup1 = $('#osc1-type').find('optgroup[label="Periodic Waves"]');
 	const $optgroup2 = $('#osc2-type').find('optgroup[label="Periodic Waves"]');
-	[
-		{ label: 'Saw',      name: 'custom_saw',      url: 'waves/saw.json' },
-		{ label: 'Square',   name: 'custom_square',   url: 'waves/square.json' },
-		{ label: 'Triangle', name: 'custom_triangle', url: 'waves/triangle.json' },
-		{ label: 'Boh',      name: 'boh',             url: 'waves/boh.json' },
-		{ label: 'Noise',    name: 'noise',           url: 'waves/noise.json' },
-		{ label: 'Pulse',    name: 'pulse',           url: 'waves/pulse.json' },
-		{ label: 'Warm Saw', name: 'warm_saw',        url: 'waves/warm_saw.json' },
-		{ label: 'Horn',     name: 'horn',            url: 'waves/horn.json' },
-		{ label: 'Celeste',  name: 'celeste',         url: 'waves/celeste.json' }
+	[      
+		{ label: 'Boh',            name: 'boh',             url: 'waves/boh.json' },
+		{ label: 'Horn',           name: 'horn',            url: 'waves/horn.json' },
+		{ label: 'Noise',          name: 'noise',           url: 'waves/noise.json' },
+		{ label: 'Pulse',          name: 'pulse',           url: 'waves/pulse.json' },
+		{ label: 'Saw',            name: 'custom_saw',      url: 'waves/saw.json' },
+		{ label: 'Square',         name: 'custom_square',   url: 'waves/square.json' },
+		{ label: 'Triangle',       name: 'custom_triangle', url: 'waves/triangle.json' },
+		{ label: 'Warm Saw',       name: 'warm_saw',        url: 'waves/warm_saw.json' },
+		{ label: 'Warm Triangle',  name: 'warm_triangle',   url: 'waves/warm_triangle.json' },
+		{ label: 'Warm Square',    name: 'warm_square',     url: 'waves/warm_square.json' },
+		{ label: 'Dropped Saw',    name: 'dropped_saw',     url: 'waves/dropped_saw.json' },
+		{ label: 'Dropped Square', name: 'dropped_square',  url: 'waves/dropped_square.json' },
+		{ label: 'TB303 Square',   name: 'tb303_square',    url: 'waves/tb303_square.json' },
+		{ label: 'Celeste',        name: 'celeste',         url: 'waves/celeste.json' }
 	].forEach(function (file) {
 		const $option1 = $(`<option value="${file.name}" disabled>${file.label}</option>`);
 		const $option2 = $(`<option value="${file.name}" disabled>${file.label}</option>`);
