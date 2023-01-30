@@ -169,8 +169,12 @@ const MIDIController = new CometMIDIController({
 	}
 });
 
-$('.splash').delay(2000).fadeOut();
-$('#module-info').delay(8000).fadeOut();
+setTimeout(function () {
+	$('.splash').hide();
+}, 2000);
+setTimeout(function () {
+	$('#module-info').hide();
+}, 2000);
 $('.aside').on('click', '.button', function () {
 	const $this = $(this);
 	const module_id = $this.attr('data-module');
