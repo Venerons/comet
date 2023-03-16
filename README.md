@@ -1,5 +1,9 @@
 # Comet
 
+![](https://img.shields.io/github/license/Venerons/comet?style=for-the-badge)
+![](https://img.shields.io/github/v/release/Venerons/comet?style=for-the-badge)
+![](https://img.shields.io/github/issues/Venerons/comet?style=for-the-badge)
+
 Comet is a powerful digital synthesizer fully powered by Web Audio APIs.
 
 It features multiple ways to customize the sound, to control it and many visual animations.
