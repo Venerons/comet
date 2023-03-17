@@ -19,7 +19,3 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.  
 
 You can read the full copy of the GNU General Public License at [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).  
-
-## Credits
-
-Created and maintained by [Daniele Veneroni](https://venerons.github.io).
