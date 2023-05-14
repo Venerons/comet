@@ -67,17 +67,17 @@ class CometSynth {
 
 	config(settings) {
 		const t = this;
-		Object.entries(settings).forEach(function ([category_key, category_settings]) {
+		Object.entries(settings).forEach(([category_key, category_settings]) => {
 			if (!t.settings[category_key]) {
 				t.settings[category_key] = {};
 			}
-			Object.entries(category_settings).forEach(function ([setting_key, value]) {
+			Object.entries(category_settings).forEach(([setting_key, value]) => {
 				t.settings[category_key][setting_key] = value;
 			});
 		});
 
 		if (settings.osc1 || settings.osc2 || settings.filter) {
-			t.voices.forEach(function (voice) {
+			t.voices.forEach((voice) => {
 				// OSC 1
 				if (settings.osc1 && voice.osc1) {
 					voice.osc1.detune.value = t.settings.osc1.detune;
@@ -105,14 +105,14 @@ class CometSynth {
 				t.nodes.compressor.connect(t.nodes.envelope);
 				t.nodes.waveshaper.disconnect();
 			} else if (t.settings.waveshaper.curve === 'distorsion') {
-				const make_distorsion_curve = function (amount) {
+				const make_distorsion_curve = (amount) => {
 					const k = typeof amount === 'number' ? amount : 50;
 					const n_samples = 44100;
 					const curve = new Float32Array(n_samples);
 					const deg = Math.PI / 180;
 					for (let i = 0; i < n_samples; ++i) {
-						const x = i * 2 / n_samples - 1;
-						curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+						const x = (i * 2) / n_samples - 1;
+						curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
 					}
 					return curve;
 				};

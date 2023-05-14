@@ -12,7 +12,9 @@ class CometRender {
 	start() {
 		const t = this;
 		t.running = true;
-		t.frame_request = requestAnimationFrame(function (timestamp) { t.render(timestamp); });
+		t.frame_request = requestAnimationFrame((timestamp) => {
+			t.render(timestamp);
+		});
 	}
 
 	stop() {
@@ -61,16 +63,16 @@ class CometRender {
 			const circleR = 80;
 			const maxLength = circleR * 3;
 			for (let i = 0; i < array.length; ++i) {
-				const angle = ((i * degIncrement) * Math.PI) / 180;
+				const angle = (i * degIncrement * Math.PI) / 180;
 				const preX = Math.cos(angle);
 				const preY = Math.sin(angle);
-				const barValue = (array[i] * maxLength / 512) + circleR;
+				const barValue = (array[i] * maxLength) / 512 + circleR;
 				t.paper.line({
 					x1: centerX + preX * circleR,
 					y1: centerY + preY * circleR,
 					x2: centerX + preX * barValue,
 					y2: centerY + preY * barValue,
-					stroke: `hsl(${i * 360 / array.length}, 100%, 50%)`,
+					stroke: `hsl(${(i * 360) / array.length}, 100%, 50%)`,
 					join: 'miter',
 					thickness: 1
 				});
@@ -84,16 +86,16 @@ class CometRender {
 			const circleR = 240;
 			const maxLength = circleR;
 			for (let i = 0; i < array.length; ++i) {
-				const angle = ((i * degIncrement) * Math.PI) / 180;
+				const angle = (i * degIncrement * Math.PI) / 180;
 				const preX = Math.cos(angle);
 				const preY = Math.sin(angle);
-				const barValue = -(array[i] * maxLength / 512) + circleR;
+				const barValue = -((array[i] * maxLength) / 512) + circleR;
 				t.paper.line({
 					x1: centerX + preX * circleR,
 					y1: centerY + preY * circleR,
 					x2: centerX + preX * barValue,
 					y2: centerY + preY * barValue,
-					stroke: `hsl(${i * 360 / array.length}, 100%, 50%)`,
+					stroke: `hsl(${(i * 360) / array.length}, 100%, 50%)`,
 					join: 'miter',
 					thickness: 1
 				});
@@ -102,15 +104,15 @@ class CometRender {
 			const array = new Uint8Array(t.node.frequencyBinCount);
 			t.node.getByteFrequencyData(array);
 			const gap = t.paper.width / (array.length * 2);
-			const max_height = t.paper.height / 4 * 3;
+			const max_height = (t.paper.height / 4) * 3;
 			for (let i = 0; i < array.length; ++i) {
-				const newy = t.paper.height - (max_height * array[i] / 256);
+				const newy = t.paper.height - (max_height * array[i]) / 256;
 				t.paper.rect({
 					x: i * (gap * 2),
 					y: newy,
 					width: gap,
 					height: t.paper.height,
-					fill: `hsl(${i * 360 / array.length}, 100%, 50%)`
+					fill: `hsl(${(i * 360) / array.length}, 100%, 50%)`
 				});
 			}
 		} else if (t.type === 'waveshape_1' || t.type === 'waveshape_2') {
@@ -126,7 +128,7 @@ class CometRender {
 			const sliceWidth = t.paper.width / array.length;
 			let x = 0;
 			for (let i = 0; i < array.length; ++i) {
-				const y = (array[i] / 128) * t.paper.height / 2;
+				const y = ((array[i] / 128) * t.paper.height) / 2;
 				if (i === 0) {
 					t.paper.context.moveTo(x, y);
 				} else {
@@ -143,7 +145,7 @@ class CometRender {
 			}
 		} else if (t.type === 'pointers') {
 			t.hue = t.hue + 0.5 > 360 ? 0 : t.hue + 0.5;
-			t.pointers.forEach(function (e) {
+			t.pointers.forEach((e) => {
 				t.paper.circle({
 					x: e.pageX,
 					y: e.pageY,
@@ -154,7 +156,9 @@ class CometRender {
 			});
 		}
 		if (t.running) {
-			t.frame_request = requestAnimationFrame(function (timestamp) { t.render(timestamp); });
+			t.frame_request = requestAnimationFrame((timestamp) => {
+				t.render(timestamp);
+			});
 		}
 	}
 }

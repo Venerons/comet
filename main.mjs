@@ -7,10 +7,11 @@ import { CometMIDIController } from './modules/midi.mjs';
 const Synth = new CometSynth();
 
 // load wavetables
-(function () {
+(() => {
 	const $optgroup1 = $('#osc1-type').find('optgroup[label="Periodic Waves"]');
 	const $optgroup2 = $('#osc2-type').find('optgroup[label="Periodic Waves"]');
-	[      
+	// prettier-ignore
+	[
 		{ label: 'Bass',                 name: 'bass',                 url: 'waves/bass.json' },
 		{ label: 'Bass Amp360',          name: 'bass_amp360',          url: 'waves/bass_amp360.json' },
 		{ label: 'Bass Fuzz',            name: 'bass_fuzz',            url: 'waves/bass_fuzz.json' },
@@ -64,30 +65,29 @@ const Synth = new CometSynth();
 		{ label: 'Warm Square',          name: 'warm_square',          url: 'waves/warm_square.json' },
 		{ label: 'Wurlitzer 1',          name: 'wurlitzer_1',          url: 'waves/wurlitzer_1.json' },
 		{ label: 'Wurlitzer 2',          name: 'wurlitzer_2',          url: 'waves/wurlitzer_2.json' }
-		
-	].forEach(function (file) {
+	].forEach((file) => {
 		const $option1 = $(`<option value="${file.name}" disabled>${file.label}</option>`);
 		const $option2 = $(`<option value="${file.name}" disabled>${file.label}</option>`);
 		$optgroup1.append($option1);
 		$optgroup2.append($option2);
 		fetch(file.url)
-			.then(function (response) {
+			.then((response) => {
 				if (!response.ok) {
 					throw new Error('Network response was not OK');
 				}
 				return response.json();
-			}).then(function (data) {
+			}).then((data) => {
 				Synth.load_wave(file.name, data);
 				$option1.prop('disabled', false);
 				$option2.prop('disabled', false);
-			}).catch(function (e) {
+			}).catch((e) => {
 				console.error(`Failed wave loading ${file.name}: ${e.toString()}`);
 			});
 	});
 })();
 
 // load convolvers
-(function () {
+(() => {
 	const noise_buffer = Synth.context.createBuffer(2, 0.5 * Synth.context.sampleRate, Synth.context.sampleRate);
 	const left = noise_buffer.getChannelData(0);
 	const right = noise_buffer.getChannelData(1);
@@ -96,6 +96,7 @@ const Synth = new CometSynth();
 		right[i] = Math.random() * 2 - 1;
 	}
 	const $select = $('#convolver-type');
+	// prettier-ignore
 	[
 		{ label: 'Noise',           name: 'noise',     buffer: noise_buffer },
 		{ label: 'Hall',            name: 'hall',      url: 'convolvers/hall.ogg' },
@@ -103,7 +104,7 @@ const Synth = new CometSynth();
 		{ label: 'Muffler',         name: 'muffler',   url: 'convolvers/muffler.wav' },
 		{ label: 'Spring Feedback', name: 'spring',    url: 'convolvers/spring_feedback.wav' },
 		{ label: 'Echo',            name: 'echo',      url: 'convolvers/echo.wav' }
-	].forEach(function (file) {
+	].forEach((file) => {
 		const $option = $(`<option value="${file.name}" disabled>${file.label}</option>`);
 		$select.append($option);
 		if (file.buffer) {
@@ -111,17 +112,20 @@ const Synth = new CometSynth();
 			$option.prop('disabled', false);
 		} else if (file.url) {
 			fetch(file.url)
-				.then(function (response) {
+				.then((response) => {
 					if (!response.ok) {
 						throw new Error('Network response was not OK');
 					}
 					return response.arrayBuffer();
-				}).then(function (data) {
+				})
+				.then((data) => {
 					return Synth.context.decodeAudioData(data);
-				}).then(function (buffer) {
+				})
+				.then((buffer) => {
 					Synth.load_convolver(file.name, buffer);
 					$option.prop('disabled', false);
-				}).catch(function (e) {
+				})
+				.catch((e) => {
 					console.error(`Failed convolver loading ${file.name}: ${e.toString()}`);
 				});
 		}
@@ -130,49 +134,49 @@ const Synth = new CometSynth();
 
 const Render = new CometRender(document.querySelector('#surface'), Synth.nodes.analyser);
 Render.resize(window.innerWidth, window.innerHeight);
-window.addEventListener('resize', function () {
+window.addEventListener('resize', () => {
 	Render.resize(window.innerWidth, window.innerHeight);
 });
 Render.start();
 
 const PointerController = new CometPointerController({
 	surface: document.querySelector('#surface'),
-	on_start: function (control_id, osc_frequency, osc_velocity, filter_frequency, event) {
+	on_start: (control_id, osc_frequency, osc_velocity, filter_frequency, event) => {
 		Synth.add_voice(control_id, osc_frequency, osc_velocity, filter_frequency);
 		Render.add_pointer(event);
 	},
-	on_update: function (control_id, osc_frequency, osc_velocity, filter_frequency, event) {
+	on_update: (control_id, osc_frequency, osc_velocity, filter_frequency, event) => {
 		Synth.update_voice(control_id, osc_frequency, osc_velocity, filter_frequency);
 		Render.update_pointer(event);
 	},
-	on_stop: function (control_id, event) {
+	on_stop: (control_id, event) => {
 		Synth.remove_voice(control_id);
 		Render.remove_pointer(event);
 	}
 });
 
 const KeyboardController = new CometKeyboardController({
-	on_start: function (control_id, osc_frequency, osc_velocity) {
+	on_start: (control_id, osc_frequency, osc_velocity) => {
 		Synth.add_voice(control_id, osc_frequency, osc_velocity);
 	},
-	on_stop: function (control_id) {
+	on_stop: (control_id) => {
 		Synth.remove_voice(control_id);
 	}
 });
 
 const MIDIController = new CometMIDIController({
-	on_start: function (control_id, osc_frequency, osc_velocity) {
+	on_start: (control_id, osc_frequency, osc_velocity) => {
 		Synth.add_voice(control_id, osc_frequency, osc_velocity);
 	},
-	on_stop: function (control_id) {
+	on_stop: (control_id) => {
 		Synth.remove_voice(control_id);
 	}
 });
 
-setTimeout(function () {
+setTimeout(() => {
 	$('.splash').hide();
 }, 2000);
-setTimeout(function () {
+setTimeout(() => {
 	$('#module-info').hide();
 }, 2000);
 $('.aside').on('click', '.button', function () {
@@ -191,149 +195,203 @@ $('.aside').on('click', '.button', function () {
 
 // OSC
 
-$('#osc1-type').val(Synth.settings.osc1.type).on('change', function () {
-	const value = $(this).val();
-	Synth.config({ osc1: { type: value } });
-});
+$('#osc1-type')
+	.val(Synth.settings.osc1.type)
+	.on('change', function () {
+		const value = $(this).val();
+		Synth.config({ osc1: { type: value } });
+	});
 
-$('#osc1-detune').val(Synth.settings.osc1.detune).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ osc1: { detune: value } });
-});
+$('#osc1-detune')
+	.val(Synth.settings.osc1.detune)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ osc1: { detune: value } });
+	});
 
-$('#osc1-mix').val(Synth.settings.osc1.mix).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ osc1: { mix: value } });
-});
+$('#osc1-mix')
+	.val(Synth.settings.osc1.mix)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ osc1: { mix: value } });
+	});
 
-$('#osc2-type').val(Synth.settings.osc2.type).on('change', function () {
-	const value = $(this).val();
-	Synth.config({ osc2: { type: value } });
-});
+$('#osc2-type')
+	.val(Synth.settings.osc2.type)
+	.on('change', function () {
+		const value = $(this).val();
+		Synth.config({ osc2: { type: value } });
+	});
 
-$('#osc2-detune').val(Synth.settings.osc2.detune).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ osc2: { detune: value } });
-});
+$('#osc2-detune')
+	.val(Synth.settings.osc2.detune)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ osc2: { detune: value } });
+	});
 
-$('#osc2-mix').val(Synth.settings.osc2.mix).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ osc2: { mix: value } });
-});
+$('#osc2-mix')
+	.val(Synth.settings.osc2.mix)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ osc2: { mix: value } });
+	});
 
 // FILTER
 
-$('#filter-type').val(Synth.settings.filter.type).on('change', function () {
-	const value = $(this).val();
-	Synth.config({ filter: { type: value } });
-	if (value === 'lowshelf' || value === 'highshelf' || value === 'peaking') {
-		$('#filter-gain').parent().show();
-	} else {
-		$('#filter-gain').parent().hide();
-	}
-}).trigger('change');
+$('#filter-type')
+	.val(Synth.settings.filter.type)
+	.on('change', function () {
+		const value = $(this).val();
+		Synth.config({ filter: { type: value } });
+		if (value === 'lowshelf' || value === 'highshelf' || value === 'peaking') {
+			$('#filter-gain').parent().show();
+		} else {
+			$('#filter-gain').parent().hide();
+		}
+	})
+	.trigger('change');
 
-$('#filter-quality').val(Synth.settings.filter.Q).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ filter: { Q: value } });
-});
+$('#filter-quality')
+	.val(Synth.settings.filter.Q)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ filter: { Q: value } });
+	});
 
-$('#filter-detune').val(Synth.settings.filter.detune).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ filter: { detune: value } });
-});
+$('#filter-detune')
+	.val(Synth.settings.filter.detune)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ filter: { detune: value } });
+	});
 
-$('#filter-frequency').attr('max', Synth.context.sampleRate / 2).val(Synth.settings.filter.frequency).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ filter: { frequency: value } });
-});
+$('#filter-frequency')
+	.attr('max', Synth.context.sampleRate / 2)
+	.val(Synth.settings.filter.frequency)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ filter: { frequency: value } });
+	});
 
-$('#filter-gain').val(Synth.settings.filter.gain).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ filter: { gain: value } });
-});
+$('#filter-gain')
+	.val(Synth.settings.filter.gain)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ filter: { gain: value } });
+	});
 
 // COMPRESSOR
 
-$('#compressor-threshold').val(Synth.settings.compressor.threshold).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ compressor: { threshold: value } });
-});
+$('#compressor-threshold')
+	.val(Synth.settings.compressor.threshold)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ compressor: { threshold: value } });
+	});
 
-$('#compressor-knee').val(Synth.settings.compressor.knee).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ compressor: { knee: value } });
-});
+$('#compressor-knee')
+	.val(Synth.settings.compressor.knee)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ compressor: { knee: value } });
+	});
 
-$('#compressor-ratio').val(Synth.settings.compressor.ratio).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ compressor: { ratio: value } });
-});
+$('#compressor-ratio')
+	.val(Synth.settings.compressor.ratio)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ compressor: { ratio: value } });
+	});
 
-$('#compressor-attack').val(Synth.settings.compressor.attack).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ compressor: { attack: value } });
-});
+$('#compressor-attack')
+	.val(Synth.settings.compressor.attack)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ compressor: { attack: value } });
+	});
 
-$('#compressor-release').val(Synth.settings.compressor.release).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ compressor: { release: value } });
-});
+$('#compressor-release')
+	.val(Synth.settings.compressor.release)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ compressor: { release: value } });
+	});
 
 // WAVESHAPER
 
-$('#waveshaper-curve').val(Synth.settings.waveshaper.curve).on('change', function () {
-	const value = $(this).val();
-	Synth.config({ waveshaper: { curve: value } });
-});
+$('#waveshaper-curve')
+	.val(Synth.settings.waveshaper.curve)
+	.on('change', function () {
+		const value = $(this).val();
+		Synth.config({ waveshaper: { curve: value } });
+	});
 
-$('#waveshaper-oversample').val(Synth.settings.waveshaper.oversample).on('change', function () {
-	const value = $(this).val();
-	Synth.config({ waveshaper: { oversample: value } });
-});
+$('#waveshaper-oversample')
+	.val(Synth.settings.waveshaper.oversample)
+	.on('change', function () {
+		const value = $(this).val();
+		Synth.config({ waveshaper: { oversample: value } });
+	});
 
 // ENVELOPE
 
-$('#envelope-attack').val(Synth.settings.envelope.attack).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ envelope: { attack: value } });
-});
+$('#envelope-attack')
+	.val(Synth.settings.envelope.attack)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ envelope: { attack: value } });
+	});
 
-$('#envelope-release').val(Synth.settings.envelope.release).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ envelope: { release: value } });
-});
+$('#envelope-release')
+	.val(Synth.settings.envelope.release)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ envelope: { release: value } });
+	});
 
 // CONVOLVER
 
-$('#convolver-type').val(Synth.settings.convolver.type).on('change', function () {
-	const value = $(this).val();
-	Synth.config({ convolver: { type: value } });
-});
+$('#convolver-type')
+	.val(Synth.settings.convolver.type)
+	.on('change', function () {
+		const value = $(this).val();
+		Synth.config({ convolver: { type: value } });
+	});
 
 // ANALYSER
 
-$('#analyser-type').val(Render.type).on('change', function () {
-	const value = $(this).val();
-	Render.type = value;
-});
+$('#analyser-type')
+	.val(Render.type)
+	.on('change', function () {
+		const value = $(this).val();
+		Render.type = value;
+	});
 
-$('#analyser-fftSize').val(Synth.settings.analyser.fftSize).on('change', function () {
-	const value = parseInt($(this).val(), 10);
-	Synth.config({ analyser: { fftSize: value } });
-});
+$('#analyser-fftSize')
+	.val(Synth.settings.analyser.fftSize)
+	.on('change', function () {
+		const value = parseInt($(this).val(), 10);
+		Synth.config({ analyser: { fftSize: value } });
+	});
 
-$('#analyser-smoothingTimeConstant').val(Synth.settings.analyser.smoothingTimeConstant).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ analyser: { smoothingTimeConstant: value } });
-});
+$('#analyser-smoothingTimeConstant')
+	.val(Synth.settings.analyser.smoothingTimeConstant)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ analyser: { smoothingTimeConstant: value } });
+	});
 
-$('#analyser-minDecibels').val(Synth.settings.analyser.minDecibels).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ analyser: { minDecibels: value } });
-});
+$('#analyser-minDecibels')
+	.val(Synth.settings.analyser.minDecibels)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ analyser: { minDecibels: value } });
+	});
 
-$('#analyser-maxDecibels').val(Synth.settings.analyser.maxDecibels).on('input', function () {
-	const value = parseFloat($(this).val());
-	Synth.config({ analyser: { maxDecibels: value } });
-});
+$('#analyser-maxDecibels')
+	.val(Synth.settings.analyser.maxDecibels)
+	.on('input', function () {
+		const value = parseFloat($(this).val());
+		Synth.config({ analyser: { maxDecibels: value } });
+	});

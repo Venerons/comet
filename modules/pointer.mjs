@@ -10,36 +10,36 @@ class CometPointerController {
 		t.#on_update = options.on_update;
 		t.#on_stop = options.on_stop;
 		const pointers = new Set();
-		t.#surface.addEventListener('pointerdown', function (e) {
+		t.#surface.addEventListener('pointerdown', (e) => {
 			if (!pointers.has(e.pointerId)) {
 				pointers.add(e.pointerId);
 				t.start(e);
 			}
 		});
-		t.#surface.addEventListener('pointermove', function (e) {
+		t.#surface.addEventListener('pointermove', (e) => {
 			if (pointers.has(e.pointerId)) {
 				t.update(e);
 			}
 		});
-		t.#surface.addEventListener('pointerup', function (e) {
+		t.#surface.addEventListener('pointerup', (e) => {
 			if (pointers.has(e.pointerId)) {
 				pointers.delete(e.pointerId);
 				t.stop(e);
 			}
 		});
-		t.#surface.addEventListener('pointercancel', function (e) {
+		t.#surface.addEventListener('pointercancel', (e) => {
 			if (pointers.has(e.pointerId)) {
 				pointers.delete(e.pointerId);
 				t.stop(e);
 			}
 		});
-		t.#surface.addEventListener('pointerout', function (e) {
+		t.#surface.addEventListener('pointerout', (e) => {
 			if (pointers.has(e.pointerId)) {
 				pointers.delete(e.pointerId);
 				t.stop(e);
 			}
 		});
-		t.#surface.addEventListener('pointerleave', function (e) {
+		t.#surface.addEventListener('pointerleave', (e) => {
 			if (pointers.has(e.pointerId)) {
 				pointers.delete(e.pointerId);
 				t.stop(e);
@@ -94,7 +94,7 @@ class CometPointerController {
 	static smart_osc_frequency(mouseX, mouseMaxW) {
 		const minValue = 27.5;
 		const maxValue = 2000; // 4186.01
-		const range = mouseX * 1.0 / mouseMaxW;
+		const range = (mouseX * 1.0) / mouseMaxW;
 		const numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
 		const multiplier = Math.pow(2, numberOfOctaves * (range - 1.0));
 		return maxValue * multiplier;
@@ -103,7 +103,7 @@ class CometPointerController {
 	static smart_filter_frequency(mouseY, mouseMaxH) {
 		const minValue = 27.5;
 		const maxValue = 24000; // Synth.context.sampleRate / 2
-		const range = 1.0 - (mouseY * 1.0 / mouseMaxH);
+		const range = 1.0 - (mouseY * 1.0) / mouseMaxH;
 		const numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
 		const multiplier = Math.pow(2, numberOfOctaves * (range - 1.0));
 		return maxValue * multiplier;
